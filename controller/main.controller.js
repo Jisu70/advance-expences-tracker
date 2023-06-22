@@ -13,9 +13,11 @@ app.mainRoute = (req, res) => {
 app.saveData = (req, res) => {
   const item = req.body.item;
   const amount = req.body.amount;
+  const category = req.body.category;
   Expences.create({
     item,
     amount,
+    category,
   })
     .then((result) => {
       console.log(" Expences Added ");
@@ -99,11 +101,11 @@ app.deleteExpences = (req, res) => {
     });
 };
 
-// Expences by month 
+// Expences by month
 /**
- * 
- * @param {*} req 
- * @param {*} res 
+ *
+ * @param {*} req
+ * @param {*} res
  */
 app.getExpencesByMonth = async (req, res) => {
   const month = req.body.month;
@@ -115,14 +117,30 @@ app.getExpencesByMonth = async (req, res) => {
 
     res.json(expenses);
   } catch (error) {
-    console.error('Error retrieving expenses:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error retrieving expenses:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
+// Expences by category
+app.getExpensesByCategory = async (req, res) => {
+  const category = req.body.category;
+  console.log(category);
+  try {
+    const expenses = await Expences.findAll({
+      where: {
+        category: category,
+      },
+    });
+
+    res.json(expenses);
+  } catch (error) {
+    console.error("Error retrieving expenses:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 module.exports = app;
-
 
 // const expenses = await Expenses.findAll({
 //   where: sequelize.literal(`MONTH(createdAt) = ${month}`),
