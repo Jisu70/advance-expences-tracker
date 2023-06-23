@@ -11,9 +11,11 @@ app.mainRoute = (req, res) => {
 
 // To save the Expences in database
 app.saveData = (req, res) => {
+  console.log("hello")
   const item = req.body.item;
   const amount = req.body.amount;
   const category = req.body.category;
+  console.log(category)
   Expences.create({
     item,
     amount,
@@ -40,6 +42,7 @@ app.updateExpences = (req, res) => {
   const userId = req.body.id;
   const updatedItem = req.body.item;
   const updatedAmount = req.body.amount;
+  const updatedCategory = req.body.category;
 
   Expences.findByPk(userId)
     .then((result) => {
@@ -47,6 +50,7 @@ app.updateExpences = (req, res) => {
         console.log(" this is result", result);
         result.item = updatedItem;
         result.amount = updatedAmount;
+        result.category = updatedCategory;
         return result.save();
       } else {
         throw new Error("Cannot not edit");
@@ -142,6 +146,3 @@ app.getExpensesByCategory = async (req, res) => {
 
 module.exports = app;
 
-// const expenses = await Expenses.findAll({
-//   where: sequelize.literal(`MONTH(createdAt) = ${month}`),
-// });

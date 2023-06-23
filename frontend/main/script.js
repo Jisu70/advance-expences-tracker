@@ -1,10 +1,13 @@
 console.log(" Hello  I am Expences Manager ");
-const API_URL = `http://localhost:3000`;
-//
+const API_URL = `http://localhost:3000/api/main`;
+
+// 
 async function addExpences() {
   const userData = {};
   userData.amount = document.getElementById("amount").value;
   userData.item = document.getElementById("item").value;
+  userData.category = document.getElementById("table").value;
+  console.log(userData);
 
   const response = await fetch(`${API_URL}/savedata`, {
     method: "POST",
@@ -36,7 +39,7 @@ async function showAllExpencesOnScreen() {
 
     listItem.className = "list-group-item";
 
-    listItem.textContent = `Item Name : ${item.item} , Item Price : ${item.amount}  `;
+    listItem.textContent = `Item Name : ${item.item} , Item Price : ${item.amount}    Category  : ${item.category} `;
 
     const editButton = document.createElement("btn");
 
@@ -46,7 +49,7 @@ async function showAllExpencesOnScreen() {
 
     editButton.textContent = "Edit";
 
-    editButton.addEventListener("click", () => editItemDetails(item.id, item.item, item.amount));
+    editButton.addEventListener("click", () => editItemDetails(item.id, item.item, item.amount, item.category));
 
     const deleteButton = document.createElement("button");
 
@@ -64,13 +67,15 @@ async function showAllExpencesOnScreen() {
   });
 }
 
-async function editItemDetails(id,itemvalue,itemprice) {
+async function editItemDetails(id, itemvalue, itemprice, itemcategory) {
   const item = prompt(" Change The Item name ",itemvalue);
   const amount = prompt(" Change The Item Price ",itemprice);
+  const category = prompt(" Change The Item Category ",itemcategory);
   const updatedDetails = {
     id,
     item,
     amount,
+    category
   };
   const response = await fetch(`${API_URL}/update-expences`, {
     method: "PUT",
@@ -82,6 +87,7 @@ async function editItemDetails(id,itemvalue,itemprice) {
   showAllExpencesOnScreen();
   showTotalExpenses();
 }
+
 // Delete function
 async function deleteItem(id) {
   const response = await fetch(`${API_URL}/delete-expences`, {
