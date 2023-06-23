@@ -1,31 +1,35 @@
 // Dependencies
 const express = require("express");
 
-const app = express();
+const bodyparser = require("body-parser");
 
 const cors = require("cors");
 
+const app = express();
+
 app.use(cors());
 
+// Database connecton
 const dbConnection  = require('./util/database')
-
-const bodyparser = require("body-parser");
 
 app.use(bodyparser.urlencoded({ extended: true }));
 
 app.use(express.json());
-// 
+// Routes
 const userRouter = require("./route/user.route");
 const mainRouter = require("./route/expences.main");
 
 // Models
-const epenceModel = require("./model/expences.model");
-const userModel = require("./model/user.model");
+const Expence = require("./model/expences.model");
+const User = require("./model/user.model");
 
 // Routes
 app.use('/api/user', userRouter);
 app.use('/api/main', mainRouter);
 
+// Association
+Expence.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+User.hasMany(Expence);
 
 
 // To define the models in the database
@@ -35,8 +39,8 @@ app.use('/api/main', mainRouter);
     console.log('Connection to the database has been established successfully.');
 
     // Sync models with the database
-    await epenceModel.sync({force : false});
-    await userModel.sync({ force : false });
+    await Expence.sync({force : true});
+    await User.sync({ force : true });
 
     console.log('Models synced to the database.');
 
@@ -44,11 +48,6 @@ app.use('/api/main', mainRouter);
     console.error('Unable to connect to the database:', error);
   }
 })();
-
-
-
-
-
 
 
 // Starting the server

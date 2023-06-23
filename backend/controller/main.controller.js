@@ -20,6 +20,7 @@ app.saveData = (req, res) => {
     item,
     amount,
     category,
+    UserId : req.user.id
   })
     .then((result) => {
       console.log(" Expences Added ");
