@@ -11,7 +11,7 @@ app.mainRoute = (req, res) => {
 
 // To save the Expences in database
 app.saveData = (req, res) => {
-  console.log("hello")
+   const userId = req.user.id; 
   const item = req.body.item;
   const amount = req.body.amount;
   const category = req.body.category;
@@ -20,7 +20,7 @@ app.saveData = (req, res) => {
     item,
     amount,
     category,
-    UserId : req.user.id
+    UserId: userId 
   })
     .then((result) => {
       console.log(" Expences Added ");
