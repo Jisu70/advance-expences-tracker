@@ -3,6 +3,7 @@ const express = require("express");
 const bodyparser = require("body-parser");
 const cors = require("cors");
 const app = express();
+const paymentRoute = require('./route/razorpay.route')
 require('dotenv').config();
 
 app.use(cors());
@@ -25,6 +26,7 @@ const User = require("./model/user.model");
 // Routes
 app.use("/api/user", userRouter);
 app.use("/api/main", mainRouter);
+app.use('/api/razorpay', paymentRoute)
 
 // Association
 User.hasMany(Expence);

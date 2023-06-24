@@ -143,3 +143,18 @@ botam.addEventListener("click", (e) => {
   e.preventDefault();
   addExpences();
 });
+
+const premiumButton = document.getElementById('premium-button');
+premiumButton.addEventListener('click', async () => {
+  const response = await fetch('http://localhost:3000/api/razorpay/checkout', {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ amount: 25 })
+  });
+
+  console.log(response)
+
+});
+
