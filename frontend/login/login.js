@@ -13,9 +13,12 @@ async function chceckUser() {
   };
   try {
     const response = await axios.post(`${API_URL}/api/user/login`, userData);
-    console.log(response);
     if (response.status === 200) {
       alert("Login Successfully ");
+      if(localStorage.getItem("token")){
+        localStorage.removeItem("token") ;
+      }
+     localStorage.setItem('token', response.data.token) ;
       window.location.href = "http://127.0.0.1:5500/frontend/main/index.html";
     } else {
       alert("Problem in Signup ");

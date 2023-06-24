@@ -7,26 +7,37 @@ async function addExpences() {
   userData.amount = document.getElementById("amount").value;
   userData.item = document.getElementById("item").value;
   userData.category = document.getElementById("table").value;
-  console.log(userData);
+  // TAking token from localstorage
+  const token = localStorage.getItem('token');
 
   const response = await fetch(`${API_URL}/savedata`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      // Send token in header 
+      "Authorization": `Bearer ${token}`
     },
     body: JSON.stringify(userData),
   });
+  
   let data = await response.json();
   console.log(data);
   showAllExpencesOnScreen();
   showTotalExpenses();
   amount.value = '';
   item.value = '';
-
 }
 
+
 async function showAllExpencesOnScreen() {
-  const response = await fetch(`${API_URL}/all-expences`);
+  const token = localStorage.getItem('token');  
+  const response = await fetch(`http://localhost:3000/api/main/all-expences`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+  });
   const data = await response.json();
 
   const itemList = document.getElementsByClassName("list-group")[0];
@@ -104,10 +115,17 @@ async function deleteItem(id) {
 
 // Show total expenses
 async function showTotalExpenses() {
-  const response = await fetch(`${API_URL}/total-expences`);
+  const token = localStorage.getItem('token');
+  console.log(token)
+  const response = await fetch(`http://localhost:3000/api/main/total-expences`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+  });
   const data = await response.json();
   let sum = 0;
-
   data.forEach((result) => {
     sum += parseInt(result.amount);
   });

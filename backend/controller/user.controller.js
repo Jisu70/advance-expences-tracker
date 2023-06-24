@@ -28,8 +28,9 @@ const loginUser = async (req, res) => {
   try {
     // This will search the user using email
     const user = await User.findOne({
-      email: req.body.email,
+      where: { email: req.body.email }
     });
+    console.log('user in login: ', user);
     if (user) {
       // This will compare the password thats come with body
       const isValidPassword = await bcrypt.compare(
@@ -40,8 +41,8 @@ const loginUser = async (req, res) => {
         // Generating token using jwt
         const token = jwt.sign(
           {
-            username: user.username,
-            userId: user._id,
+            userId: user.id,
+            username: user.name,
           },
           process.env.JWT_SECRET,
           {

@@ -6,32 +6,34 @@ const Sequelize = require("sequelize");
 const app = {};
 
 app.mainRoute = (req, res) => {
-  res.end();
+  res.end(" THere is Noting ");
 };
 
-// To save the Expences in database
+// To save the Expenses in the database
 app.saveData = (req, res) => {
-   const userId = req.user.id; 
+  const userId = req.userId
   const item = req.body.item;
   const amount = req.body.amount;
   const category = req.body.category;
-  console.log(category)
   Expences.create({
     item,
     amount,
     category,
-    UserId: userId 
+    UserId: userId,
   })
     .then((result) => {
-      console.log(" Expences Added ");
+      console.log("Expenses Added");
       res.json(result);
     })
     .catch((err) => console.log(err));
 };
 
+
 // To get all the expences
 app.allExpences = (req, res) => {
-  Expences.findAll()
+  const userId = req.userId;
+  console.log("userId :", userId)
+  Expences.findAll({ where : {userId :userId} })
     .then((exp) => {
       res.send(exp);
     })
@@ -67,13 +69,21 @@ app.updateExpences = (req, res) => {
     });
 };
 
-// To calculate the total expences
-app.totalExpences = (req, res) => {
-  Expences.findAll()
-    .then((exp) => {
-      return res.send(exp);
+// To calculate the total expenses
+app.totalExpenses = (req, res) => {
+ 
+
+  Expences.findAll({ where: { userId: req.userId } })
+    .then((expenses) => {
+      if (!expenses) {
+        return res.status(404).json({ error: "Expenses not found for the provided user ID." });
+      }
+      return res.json(expenses);
     })
-    .catch((err) => console.error("Error fetching Expences:", err));
+    .catch((err) => {
+      console.error("Error fetching expenses:", err);
+      return res.status(500).json({ error: "Internal server error." });
+    });
 };
 
 app.singleExpences = (req, res) => {
@@ -106,11 +116,11 @@ app.deleteExpences = (req, res) => {
     });
 };
 
-// Expences by month
 /**
  *
  * @param {*} req
  * @param {*} res
+ *  Expences by month
  */
 app.getExpencesByMonth = async (req, res) => {
   const month = req.body.month;

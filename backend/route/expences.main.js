@@ -5,11 +5,14 @@ const router = express.Router();
 
 const mainController = require("../controller/main.controller");
 
-router.get("/total-expences", mainController.totalExpences);
+const checkLogin = require('../middleware/checkLogin.js')
 
-router.post("/savedata", mainController.saveData);
 
-router.get("/all-expences", mainController.allExpences);
+router.get("/total-expences", checkLogin, mainController.totalExpenses);
+
+router.post("/savedata", checkLogin, mainController.saveData);
+
+router.get("/all-expences", checkLogin, mainController.allExpences);
 
 router.get("/single-expences/:id", mainController.singleExpences);
 
