@@ -1,9 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const  checkout = require("../controller/razorpay.controller");
+const razorpayController = require("../controller/razorpay.controller");
 
+router.post("/checkout", razorpayController.checkout);
 
-router.post('/checkout', checkout)
-
-
-module.exports = router ;
+module.exports = router;
