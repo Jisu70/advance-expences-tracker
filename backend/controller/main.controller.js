@@ -1,5 +1,5 @@
 // Dependencies
-const Expences = require("../model/expences.model");
+const { Expense } = require("../model");
 const Sequelize = require("sequelize");
 
 // Module scaffolding
@@ -15,7 +15,7 @@ app.saveData = (req, res) => {
   const item = req.body.item;
   const amount = req.body.amount;
   const category = req.body.category;
-  Expences.create({
+  Expense.create({
     item,
     amount,
     category,
@@ -29,25 +29,25 @@ app.saveData = (req, res) => {
 };
 
 
-// To get all the expences
-app.allExpences = (req, res) => {
+// To get all the expenses
+app.allExpenses = (req, res) => {
   const userId = req.userId;
   console.log("userId :", userId)
-  Expences.findAll({ where : {userId :userId} })
+  Expense.findAll({ where : {userId :userId} })
     .then((exp) => {
       res.send(exp);
     })
-    .catch((err) => console.error("Error fetching Expences:", err));
+    .catch((err) => console.error("Error fetching Expenses:", err));
 };
 
-// To edit or update the expences
-app.updateExpences = (req, res) => {
+// To edit or update the expenses
+app.updateExpenses = (req, res) => {
   const userId = req.body.id;
   const updatedItem = req.body.item;
   const updatedAmount = req.body.amount;
   const updatedCategory = req.body.category;
 
-  Expences.findByPk(userId)
+  Expense.findByPk(userId)
     .then((result) => {
       if (result) {
         console.log(" this is result", result);
@@ -60,8 +60,8 @@ app.updateExpences = (req, res) => {
       }
     })
     .then((result) => {
-      console.log("Expences updated:", result);
-      res.json({ message: "Expences updated successfully." });
+      console.log("Expenses updated:", result);
+      res.json({ message: "Expenses updated successfully." });
     })
     .catch((err) => {
       console.log(err);
@@ -73,7 +73,7 @@ app.updateExpences = (req, res) => {
 app.totalExpenses = (req, res) => {
  
 
-  Expences.findAll({ where: { userId: req.userId } })
+  Expense.findAll({ where: { userId: req.userId } })
     .then((expenses) => {
       if (!expenses) {
         return res.status(404).json({ error: "Expenses not found for the provided user ID." });
@@ -86,19 +86,19 @@ app.totalExpenses = (req, res) => {
     });
 };
 
-app.singleExpences = (req, res) => {
+app.singleExpenses = (req, res) => {
   const id = req.params.id;
-  Expences.findByPk(id)
+  Expense.findByPk(id)
     .then((result) => {
       res.send(result);
     })
     .catch((err) => console.log(err));
 };
 
-// To delete th expences
-app.deleteExpences = (req, res) => {
+// To delete th expenses
+app.deleteExpenses = (req, res) => {
   const id = req.body.id;
-  Expences.findByPk(id)
+  Expense.findByPk(id)
     .then((item) => {
       if (item) {
         return item.destroy();
@@ -120,13 +120,13 @@ app.deleteExpences = (req, res) => {
  *
  * @param {*} req
  * @param {*} res
- *  Expences by month
+ *  Expenses by month
  */
-app.getExpencesByMonth = async (req, res) => {
+app.getExpensesByMonth = async (req, res) => {
   const month = req.body.month;
   console.log(month);
   try {
-    const expenses = await Expences.findAll({
+    const expenses = await Expense.findAll({
       where: Sequelize.literal(`MONTH(createdAt) = ${month}`),
     });
 
@@ -137,12 +137,12 @@ app.getExpencesByMonth = async (req, res) => {
   }
 };
 
-// Expences by category
+// Expenses by category
 app.getExpensesByCategory = async (req, res) => {
   const category = req.body.category;
   console.log(category);
   try {
-    const expenses = await Expences.findAll({
+    const expenses = await Expense.findAll({
       where: {
         category: category,
       },

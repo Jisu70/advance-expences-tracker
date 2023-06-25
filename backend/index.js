@@ -12,14 +12,16 @@ app.use(express.json());
 // Database connection
 const dbConnection = require("./config/database");
 
-// Routes
+// Impoting Routes
 const userRouter = require("./route/user.route");
-const mainRouter = require("./route/expences.main");
+const mainRouter = require("./route/expenses.main");
 const paymentRoute = require("./route/razorpay.route");
 
 // Models
-const Expence = require("./model/expences.model");
-const User = require("./model/user.model");
+// const Expense = require("./model/expenses.model");
+// const User = require("./model/user.model");
+// const Order = require("./model/order.model");
+const { Expense, User, Order } = require('./model');
 
 // Routes
 app.use("/api/user", userRouter);
@@ -35,14 +37,21 @@ app.use("/api/razorpay", paymentRoute);
     );
 
     // Sync models with the database
-    await Expence.sync();
     await User.sync();
+    await Expense.sync();
+    await Order.sync();
 
     console.log("Models synced to the database.");
 
-    // Association
-    User.hasMany(Expence);
-    Expence.belongsTo(User);
+    // Association  (between user and expenses)
+    // User.hasMany(Expense);
+    // Expense.belongsTo(User);
+
+    // Association  (between user and order)
+    // User.hasMany(Order);
+    // Order.belongsTo(User);
+
+
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }

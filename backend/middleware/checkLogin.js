@@ -8,6 +8,7 @@ const checkLogin = (req, res, next) => {
     const { userId, username } = decoded;
     req.userId = userId;
     req.username = username;
+    console.log(" User  authorised ")
     next();
   } catch (err) {
     next("Authentication failure!");

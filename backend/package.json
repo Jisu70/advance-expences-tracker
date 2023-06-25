@@ -1,7 +1,7 @@
 {
-  "name": "expences-tracker-mysql-api",
+  "name": "expenses-tracker-mysql-api",
   "version": "1.0.0",
-  "description": "A simple expences tracker api",
+  "description": "A simple expenses tracker api",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
