@@ -18,10 +18,7 @@ const mainRouter = require("./route/expenses.main");
 const paymentRoute = require("./route/razorpay.route");
 
 // Models
-// const Expense = require("./model/expenses.model");
-// const User = require("./model/user.model");
-// const Order = require("./model/order.model");
-const { Expense, User, Order } = require('./model');
+const { Expense, User, Order } = require("./model");
 
 // Routes
 app.use("/api/user", userRouter);
@@ -42,16 +39,6 @@ app.use("/api/razorpay", paymentRoute);
     await Order.sync();
 
     console.log("Models synced to the database.");
-
-    // Association  (between user and expenses)
-    // User.hasMany(Expense);
-    // Expense.belongsTo(User);
-
-    // Association  (between user and order)
-    // User.hasMany(Order);
-    // Order.belongsTo(User);
-
-
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }
