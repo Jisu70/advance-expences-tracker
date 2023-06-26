@@ -24,6 +24,9 @@ router.delete("/delete-expenses", mainController.deleteExpenses);
 router.post("/month-expenses", mainController.getExpensesByMonth);
 
 // For specific category
-router.post("/category-expenses", mainController.getExpensesByCategory);
+router.post("/category-expenses", mainController.getExpensesByCategory)
+;
+// To show everyone total expences 
+router.get("/lead-board", mainController.allUserTotalExpenses);
 
 module.exports = router;

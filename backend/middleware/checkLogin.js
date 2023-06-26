@@ -19,6 +19,7 @@ const checkLogin = (req, res, next) => {
     console.log("User authorized");
     next();
   } catch (err) {
+    res.status(401).json({ error: "Authentication failure!" });
     next("Authentication failure!");
   }
 };

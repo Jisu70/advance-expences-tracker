@@ -41,6 +41,20 @@ app.allExpenses = (req, res) => {
     .catch((err) => console.error("Error fetching Expenses:", err));
 };
 
+// To get all the expenses
+/**
+ * Populate via Foregin key
+ * @param {*} req 
+ * @param {*} res 
+ */
+app.allUserTotalExpenses = (req, res) => {
+  Expense.findAll({ include: [User] })
+    .then((exp) => {
+      res.send(exp);
+    })
+    .catch((err) => console.error("Error fetching Expenses:", err));
+};
+
 // To edit or update the expenses
 app.updateExpenses = (req, res) => {
   const userId = req.body.id;
@@ -72,8 +86,6 @@ app.updateExpenses = (req, res) => {
 
 // To calculate the total expenses
 app.totalExpenses = (req, res) => {
- 
-
   Expense.findAll({ where: { userId: req.userId } })
     .then((expenses) => {
       if (!expenses) {
@@ -87,6 +99,7 @@ app.totalExpenses = (req, res) => {
     });
 };
 
+// To find the user by their ID
 app.findeUser= (req, res) => {
   const id = req.userId
   User.findByPk(id)
@@ -95,6 +108,7 @@ app.findeUser= (req, res) => {
     })
     .catch((err) => console.log(err));
 };
+
 
 // To delete th expenses
 app.deleteExpenses = (req, res) => {
@@ -117,6 +131,7 @@ app.deleteExpenses = (req, res) => {
     });
 };
 
+
 /**
  *
  * @param {*} req
@@ -138,6 +153,7 @@ app.getExpensesByMonth = async (req, res) => {
   }
 };
 
+
 // Expenses by category
 app.getExpensesByCategory = async (req, res) => {
   const category = req.body.category;
@@ -156,5 +172,14 @@ app.getExpensesByCategory = async (req, res) => {
   }
 };
 
-module.exports = app;
 
+// For premium user 
+app.leadBoard = (req, res) => {
+  Expense.findAll()
+    .then((exp) => {
+      res.send(exp);
+    })
+    .catch((err) => console.error("Error fetching Expenses:", err));
+}
+
+module.exports = app;
