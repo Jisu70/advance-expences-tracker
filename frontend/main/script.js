@@ -165,9 +165,9 @@ premiumButton.addEventListener("click", async () => {
       }
     );
 
-    const  {details}  = await response.json();
+    const { details } = await response.json();
 
-    console.log('Order details : ',details)
+    console.log("Order details : ", details);
 
     const options = {
       key: key,
@@ -177,7 +177,7 @@ premiumButton.addEventListener("click", async () => {
       image:
         "https://clipartix.com/wp-content/uploads/2016/09/Cartoons-clipart-image-1.jpg",
       order_id: details.id,
-      callback_url: "http://localhost:3000/api/razorpay/verify",
+      callback_url: `http://localhost:3000/api/razorpay/verify?token=${token}`,
       prefill: {
         name: "Gaurav Kumar",
         email: "gaurav.kumar@example.com",
