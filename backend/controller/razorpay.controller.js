@@ -3,8 +3,7 @@ const razorpay = require("razorpay");
 require("dotenv").config();
 const crypto = require("crypto");
 const Order = require("../model/order.model");
-// const Order = require('../model/order.model');
-// var { validatePaymentVerification, validateWebhookSignature } = require('../node_modules/razorpay/dist/utils/razorpay-utils');
+const User = require('../model/user.model') 
 
 // Instance
 const razorInstance = new razorpay({
@@ -15,13 +14,22 @@ const razorInstance = new razorpay({
 // For create Order
 const checkout = async (req, res) => {
   console.log(" UserId :", req.userId);
+  console.log(" UserId :", req.username);
+  const UserId = req.userId
   const options = {
     amount: 25 * 100,
     currency: "INR",
   };
   try {
     const orders = await razorInstance.orders.create(options);
-    console.log("generated OrderID: ", orders);
+    console.log("generated Order details : ", orders);
+    //  insert the order details and status to database 
+    await Order.create({
+      paymentid: null,
+      orderid: orders.id,
+      status: "pending",
+      UserId
+    });
     return res.status(200).json({ success: true, details: orders });
   } catch (error) {
     return res.status(500).json({
@@ -31,37 +39,43 @@ const checkout = async (req, res) => {
 };
 // For Verify the payment details
 const verifyPayment = async (req, res) => {
-  // Implementation of insert the order details to database 
   try {
     console.log(req.body);
-    console.log(req.user);
+    const userId = req.userId
     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
       req.body;
-
-    const body = razorpay_payment_id + "|" + razorpay_order_id;
-    console.log("hmac body: ", body);
-    console.log("hmac body type: ", typeof body);
-
-    console.log("secret: ", process.env.RAZORPAY_API_SECRET);
 
     const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_API_SECRET);
 
     hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
     let generatedSignature = hmac.digest("hex");
-
-    console.log(" sig received", razorpay_signature);
-    console.log(" sig generated ", generatedSignature);
-
+    // Checking Both signature are same or not
     if (razorpay_signature == generatedSignature) {
-      const newOrder = await Order.create({
-        paymentid: razorpay_payment_id,
-        orderid: razorpay_order_id,
-        status: "success",
-      });
+      // Then updating the payment details on database
+      await Order.update(
+        {
+          paymentid: razorpay_payment_id,
+          status: "success",
+        },
+        {
+          where: {
+            UserId: userId,
+          },
+        }
+      );
+      await User.update(
+        {
+          isPremium : true 
+        },
+        {
+          where: {
+            id : userId,
+          },
+        }
+      );
       res.status(200).json({
         success: true,
         message: "Payment verified successfully",
-        order: newOrder,
       });
     } else {
       // Payment verification failed

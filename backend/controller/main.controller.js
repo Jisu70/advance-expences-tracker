@@ -1,6 +1,7 @@
 // Dependencies
 const { Expense } = require("../model");
 const Sequelize = require("sequelize");
+const User = require('../model/user.model')
 
 // Module scaffolding
 const app = {};
@@ -86,9 +87,9 @@ app.totalExpenses = (req, res) => {
     });
 };
 
-app.singleExpenses = (req, res) => {
-  const id = req.params.id;
-  Expense.findByPk(id)
+app.findeUser= (req, res) => {
+  const id = req.userId
+  User.findByPk(id)
     .then((result) => {
       res.send(result);
     })

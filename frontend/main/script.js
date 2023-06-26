@@ -172,7 +172,6 @@ premiumButton.addEventListener("click", async () => {
     const options = {
       key: key,
       currency: "INR",
-      name: "Sudipta jana",
       description: "Test Transaction",
       image:
         "https://clipartix.com/wp-content/uploads/2016/09/Cartoons-clipart-image-1.jpg",
@@ -196,3 +195,22 @@ premiumButton.addEventListener("click", async () => {
     console.log(err);
   }
 });
+
+
+const  hidePremium = async () => {
+  let premium = document.getElementById('premium-button');
+  const token = localStorage.getItem("token");
+  const response =  await fetch(`${API_URL}/single-user`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+  if(data.isPremium === true){
+    premium.style.visibility = 'hidden';
+  }
+  }
+
+  hidePremium()

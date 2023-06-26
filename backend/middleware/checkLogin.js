@@ -1,16 +1,22 @@
 const jwt = require("jsonwebtoken");
 
 const checkLogin = (req, res, next) => {
-  const { authorization } = req.headers;
+
+  let { authorization } = req.headers;
+  if (!authorization) {
+    authorization = req.query.token;
+  }
 
   try {
-    const token = authorization.split(" ")[1] || req.query.params.token;
-    console.log(token);
+    let token = authorization.split(" ")[1];
+    if(!token){
+      token = req.query.token
+    }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const { userId, username } = decoded;
     req.userId = userId;
     req.username = username;
-    console.log(" User  authorised ");
+    console.log("User authorized");
     next();
   } catch (err) {
     next("Authentication failure!");

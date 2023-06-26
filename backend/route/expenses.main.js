@@ -14,7 +14,7 @@ router.post("/savedata", checkLogin, mainController.saveData);
 
 router.get("/all-expenses", checkLogin, mainController.allExpenses);
 
-router.get("/single-expenses/:id", mainController.singleExpenses);
+router.get("/single-user/", checkLogin, mainController.findeUser);
 
 router.put("/update-expenses", mainController.updateExpenses);
 
