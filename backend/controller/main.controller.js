@@ -1,7 +1,8 @@
 // Dependencies
 const { Expense } = require("../model");
 const Sequelize = require("sequelize");
-const User = require('../model/user.model')
+const User = require('../model/user.model');
+const sequelize = require("../config/database");
 
 // Module scaffolding
 const app = {};
@@ -154,25 +155,6 @@ app.getExpensesByMonth = async (req, res) => {
 };
 
 
-// Expenses by category
-app.getExpensesByCategory = async (req, res) => {
-  const category = req.body.category;
-  console.log(category);
-  try {
-    const expenses = await Expense.findAll({
-      where: {
-        category: category,
-      },
-    });
-
-    res.json(expenses);
-  } catch (error) {
-    console.error("Error retrieving expenses:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-
 // For premium user 
 app.leadBoard = (req, res) => {
   Expense.findAll()
@@ -190,5 +172,26 @@ app.isPremium = (req, res) => {
     })
     .catch((err) => console.error("Error fetching Expenses:", err));
 }
+
+// 
+app.perUserTotal = async (req, res) => {
+  try {
+    // Groupby technic
+    const expenses = await Expense.findAll({ 
+      attributes: [
+        "UserId",
+        [sequelize.fn('sum', sequelize.col('amount')), 'total_cost']
+      ],
+      group: ['UserId']
+    })
+    res.send(expenses)
+  } catch (error) {
+    console.error("Error retrieving expenses:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
 
 module.exports = app;
