@@ -52,14 +52,14 @@ async function showAllExpensesOnScreen() {
     return;
   }
 
-  const data = await response.json();
+  const {result} = await response.json();
 
   const itemList = document.getElementsByClassName("list-group")[0];
 
   // Clear the existing content
   itemList.innerHTML = "";
 
-  data.forEach((item) => {
+  result.forEach((item) => {
     const listItem = document.createElement("li");
 
     listItem.className = "list-group-item";

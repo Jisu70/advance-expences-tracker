@@ -34,15 +34,23 @@ app.saveData = async (req, res) => {
 };
 
 // To get all the expenses
-app.allExpenses = (req, res) => {
-  const userId = req.userId;
-  console.log("userId :", userId);
-  Expense.findAll({ where: { userId: userId } })
-    .then((exp) => {
-      res.send(exp);
+app.allExpenses = async (req, res) => {
+  try {
+    const userId = req.userId;
+    console.log("userId :", userId);
+    let result = await Expense.findAll({
+      where: {
+        userId: userId
+      }
     })
-    .catch((err) => console.error("Error fetching Expenses:", err));
-};
+    res.status(200).json({ result })
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: err
+    })
+  }
+}
 
 // To get all the expenses
 /**
@@ -114,57 +122,23 @@ app.findeUser = (req, res) => {
     .catch((err) => console.log(err));
 };
 
-// To delete th expenses
-app.deleteExpenses = (req, res) => {
+app.deleteExpenses = async (req, res) => {
   const id = req.body.id;
-  Expense.findByPk(id)
-    .then((item) => {
-      if (item) {
-        return item.destroy();
-      } else {
-        throw new Error("Item not found");
-      }
-    })
-    .then(() => {
-      console.log("Item DESTROYED");
-      res.json({ message: "Item deleted successfully." });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: "An error occurred." });
-    });
-};
-
-/**
- *
- * @param {*} req
- * @param {*} res
- *  Expenses by month
- */
-app.getExpensesByMonth = async (req, res) => {
-  const month = req.body.month;
-  console.log(month);
   try {
-    const expenses = await Expense.findAll({
-      where: Sequelize.literal(`MONTH(createdAt) = ${month}`),
-    });
-
-    res.json(expenses);
-  } catch (error) {
-    console.error("Error retrieving expenses:", error);
-    res.status(500).json({ error: "Internal server error" });
+    const expense = await Expense.findByPk(id);
+    if (!expense) {
+      return res.status(404).json({ error: 'Expense not found.' });
+    }
+    await expense.destroy();
+    console.log('Item DESTROYED');
+    res.json({ message: 'Item deleted successfully.' });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: 'An error occurred.' });
   }
 };
 
-// For premium user
-app.leadBoard = (req, res) => {
-  Expense.findAll()
-    .then((exp) => {
-      res.send(exp);
-    })
-    .catch((err) => console.error("Error fetching Expenses:", err));
-};
-
+// Is user premium
 app.isPremium = (req, res) => {
   let id = req.userId;
   User.findByPk(id)

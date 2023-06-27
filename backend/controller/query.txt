@@ -1,0 +1,15 @@
+Populate via forigen key 
+
+// To get all the expenses
+/**
+ * Populate via Foregin key
+ * @param {*} req
+ * @param {*} res
+ */
+app.allUserTotalExpenses = (req, res) => {
+  Expense.findAll({ include: [User] })
+    .then((exp) => {
+      res.send(exp);
+    })
+    .catch((err) => console.error("Error fetching Expenses:", err));
+};

@@ -1,4 +1,4 @@
- // Dependencies
+// Dependencies
 const express = require("express");
 
 const router = express.Router();
@@ -23,7 +23,7 @@ router.delete("/delete-expenses", mainController.deleteExpenses);
 // To show everyone total expences 
 router.get("/lead-board", mainController.allUserTotalExpenses);
 // check the user is premium or not
-router.get("/is-premium",checkLogin, mainController.isPremium);
+router.get("/is-premium", checkLogin, mainController.isPremium);
 //
 router.get("/perusertotal", mainController.perUserTotal);
 
