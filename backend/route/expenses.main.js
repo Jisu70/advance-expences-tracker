@@ -29,4 +29,7 @@ router.post("/category-expenses", mainController.getExpensesByCategory)
 // To show everyone total expences 
 router.get("/lead-board", mainController.allUserTotalExpenses);
 
+// check the user is premium or not
+router.get("/is-premium",checkLogin, mainController.isPremium);
+
 module.exports = router;

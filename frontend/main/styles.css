@@ -52,6 +52,17 @@ input[type=number]:focus {
   --bs-btn-padding-y: 0.375rem;
 }
 
-.btn-warning {
+.btn-danger {
   margin-right: 19px;
 }
+
+.list-group-item{
+  background-color: #6dbd9f4d;
+}
+
+.btn-primary {
+  --bs-btn-color: #000;
+  --bs-btn-bg: #ffc107;
+  --bs-btn-border-color: hsla(0,0%,100%,.1);
+}
+

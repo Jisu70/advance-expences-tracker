@@ -1,6 +1,7 @@
 console.log(" Hello  I am Expenses Manager ");
 const API_URL = `http://localhost:3000/api/main`;
 
+
 // TO add the expenses
 async function addExpenses() {
   const userData = {};
@@ -63,6 +64,10 @@ async function showAllExpensesOnScreen() {
 
     listItem.className = "list-group-item";
 
+    listItem.style.backgroundColor = "#6dbd9f4d";
+
+    listItem.style.color = "#000000";
+
     listItem.textContent = `Item Name : ${item.item} , Item Price : ${item.amount}    Category  : ${item.category} `;
 
     const editButton = document.createElement("btn");
@@ -79,7 +84,7 @@ async function showAllExpensesOnScreen() {
 
     const deleteButton = document.createElement("button");
 
-    deleteButton.className = "btn btn-warning";
+    deleteButton.className = "btn btn-danger";
 
     deleteButton.style.float = "right";
 
@@ -92,8 +97,6 @@ async function showAllExpensesOnScreen() {
     itemList.appendChild(listItem);
   });
 }
-
-
 //  TO update existing expences
 async function editItemDetails(id, itemvalue, itemprice, itemcategory) {
   const item = prompt(" Change The Item name ", itemvalue);
@@ -118,16 +121,21 @@ async function editItemDetails(id, itemvalue, itemprice, itemcategory) {
 
 // Delete function
 async function deleteItem(id) {
-  const response = await fetch(`${API_URL}/delete-expenses`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id: id }),
-  });
-  console.log(" User deleted", response);
-  showAllExpensesOnScreen();
-  showTotalExpenses();
+  const confirmMessage = `Really want to delete.`;
+  if (window.confirm(confirmMessage)) {
+    const response = await fetch(`${API_URL}/delete-expenses`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: id }),
+    });
+    console.log(" User deleted", response);
+    showAllExpensesOnScreen();
+    showTotalExpenses();
+  } else {
+    return;
+  }
 }
 
 // Show total expenses
@@ -153,17 +161,39 @@ async function showTotalExpenses() {
   ).textContent = `Total Expenses : ${sum}`;
   console.log("Total expenses:", sum);
 }
+// 
+const premiumFeature = async () => {
+  const headerName = document.getElementById("header-title");
+  let premiumDiv = document.getElementById('premiumdiv');
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_URL}/single-user`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+  headerName.innerText = `${data.name}'s Expenses Tracker`;
+  if (data.isPremium === true) {
+    let premiumUser = document.createElement('button');
+    premiumUser.className = "btn btn-primary premium-button";
+    premiumUser.id = "premium-user";
+    premiumUser.textContent = "Premium User";
+    premiumUser.onclick = premiumUserButton;
+    premiumDiv.appendChild(premiumUser);
 
-const botam = document.getElementById("btn");
-
-botam.addEventListener("click", (e) => {
-  e.preventDefault();
-  addExpenses();
-});
-
+  } else {
+    let buypremium = document.createElement('button');
+    buypremium.className = "btn btn-primary premium-button";
+    buypremium.id = "premium-button";
+    buypremium.textContent = " Buy Premium ";
+    buypremium.onclick = buyPremium;
+    premiumDiv.appendChild(buypremium);
+  }
+}
 // To buy a premium membership
-const premiumButton = document.getElementById("premium-button");
-premiumButton.addEventListener("click", async () => {
+const buyPremium = async () => {
   try {
     const token = localStorage.getItem("token");
     const data = await fetch("http://localhost:3000/api/razorpay/key");
@@ -208,54 +238,30 @@ premiumButton.addEventListener("click", async () => {
   } catch (err) {
     console.log(err);
   }
-});
-
-// To hide the premium button and show them a  message to you are a premium user
-const hidePremium = async () => {
-  const headerName = document.getElementById("header-title")
-  let premium = document.getElementById('premium-button');
-  let premiumUser = document.getElementById('premium-user');
+}
+let premiumUserButton = async () => {
   const token = localStorage.getItem("token");
-  const response = await fetch(`${API_URL}/single-user`, {
+  const response = await fetch(`${API_URL}/is-premium`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
+  const leadboardLink = "http://127.0.0.1:5500/frontend/leadboard/leadbord.html";
   const data = await response.json();
-  headerName.innerText = `${data.name}'s Expenses Tracker`;
   if (data.isPremium === true) {
-    premium.style.visibility = 'hidden';
+    window.location.href = leadboardLink;
   } else {
-    premiumUser.style.visibility = 'hidden';
+    alert("You are not a premium user");
   }
 }
 
-// To show alluser tootal expenses
-const allUserTotalExpenses = async () => {
-  const response = await fetch(`${API_URL}/lead-board`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  const resultArray = await response.json();
-
-  const expensesByUser = {};
-
-  resultArray.forEach(user => {
-    if (expensesByUser[user.User.name]) {
-      expensesByUser[user.User.name] += parseFloat(user.amount);
-    } else {
-      expensesByUser[user.User.name] = parseFloat(user.amount);
-    }
-  });
-  console.log(expensesByUser)
-}
-
-allUserTotalExpenses();
+const botam = document.getElementById("btn");
+botam.addEventListener("click", (e) => {
+  e.preventDefault();
+  addExpenses();
+});
 showAllExpensesOnScreen();
 showTotalExpenses();
-hidePremium();
+premiumFeature();

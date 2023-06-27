@@ -182,4 +182,13 @@ app.leadBoard = (req, res) => {
     .catch((err) => console.error("Error fetching Expenses:", err));
 }
 
+app.isPremium = (req, res) => {
+  let id = req.userId 
+  User.findByPk(id)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => console.error("Error fetching Expenses:", err));
+}
+
 module.exports = app;
