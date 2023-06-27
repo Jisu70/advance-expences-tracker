@@ -3,7 +3,7 @@ const razorpay = require("razorpay");
 require("dotenv").config();
 const crypto = require("crypto");
 const Order = require("../model/order.model");
-const User = require('../model/user.model') 
+const User = require("../model/user.model");
 
 // Instance
 const razorInstance = new razorpay({
@@ -13,9 +13,7 @@ const razorInstance = new razorpay({
 
 // For create Order
 const checkout = async (req, res) => {
-  console.log(" UserId :", req.userId);
-  console.log(" UserId :", req.username);
-  const UserId = req.userId
+  const UserId = req.userId;
   const options = {
     amount: 25 * 100,
     currency: "INR",
@@ -23,12 +21,12 @@ const checkout = async (req, res) => {
   try {
     const orders = await razorInstance.orders.create(options);
     console.log("generated Order details : ", orders);
-    //  insert the order details and status to database 
+    //  insert the order details  to database
     await Order.create({
       paymentid: null,
       orderid: orders.id,
       status: "pending",
-      UserId
+      UserId,
     });
     return res.status(200).json({ success: true, details: orders });
   } catch (error) {
@@ -41,7 +39,7 @@ const checkout = async (req, res) => {
 const verifyPayment = async (req, res) => {
   try {
     console.log(req.body);
-    const userId = req.userId
+    const userId = req.userId;
     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
       req.body;
 
@@ -65,11 +63,11 @@ const verifyPayment = async (req, res) => {
       );
       await User.update(
         {
-          isPremium : true 
+          isPremium: true,
         },
         {
           where: {
-            id : userId,
+            id: userId,
           },
         }
       );
@@ -88,11 +86,11 @@ const verifyPayment = async (req, res) => {
       .json({ success: false, message: "Payment verification failed" });
   }
 };
-
+// It return the RAZORPAY_API_KEY
 const getKey = (req, res) => {
   res.status(200).json({ key: process.env.RAZORPAY_API_KEY });
 };
-
+// Exporting the model
 module.exports = {
   checkout,
   verifyPayment,

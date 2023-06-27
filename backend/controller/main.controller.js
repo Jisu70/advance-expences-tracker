@@ -1,7 +1,7 @@
 // Dependencies
 const { Expense } = require("../model");
 const Sequelize = require("sequelize");
-const User = require('../model/user.model');
+const User = require("../model/user.model");
 const sequelize = require("../config/database");
 
 // Module scaffolding
@@ -12,30 +12,32 @@ app.mainRoute = (req, res) => {
 };
 
 // To save the Expenses in the database
-app.saveData = (req, res) => {
-  const userId = req.userId
-  const item = req.body.item;
-  const amount = req.body.amount;
-  const category = req.body.category;
-  Expense.create({
-    item,
-    amount,
-    category,
-    UserId: userId,
-  })
-    .then((result) => {
-      console.log("Expenses Added");
-      res.json(result);
-    })
-    .catch((err) => console.log(err));
-};
+app.saveData = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const item = req.body.item;
+    const amount = req.body.amount;
+    const category = req.body.category;
 
+    const result = await Expense.create({
+      item: item,
+      amount: amount,
+      category: category,
+      UserId: userId,
+    });
+
+    res.status(200).json({ message: result });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: err });
+  }
+};
 
 // To get all the expenses
 app.allExpenses = (req, res) => {
   const userId = req.userId;
-  console.log("userId :", userId)
-  Expense.findAll({ where : {userId :userId} })
+  console.log("userId :", userId);
+  Expense.findAll({ where: { userId: userId } })
     .then((exp) => {
       res.send(exp);
     })
@@ -45,8 +47,8 @@ app.allExpenses = (req, res) => {
 // To get all the expenses
 /**
  * Populate via Foregin key
- * @param {*} req 
- * @param {*} res 
+ * @param {*} req
+ * @param {*} res
  */
 app.allUserTotalExpenses = (req, res) => {
   Expense.findAll({ include: [User] })
@@ -90,7 +92,9 @@ app.totalExpenses = (req, res) => {
   Expense.findAll({ where: { userId: req.userId } })
     .then((expenses) => {
       if (!expenses) {
-        return res.status(404).json({ error: "Expenses not found for the provided user ID." });
+        return res
+          .status(404)
+          .json({ error: "Expenses not found for the provided user ID." });
       }
       return res.json(expenses);
     })
@@ -101,15 +105,14 @@ app.totalExpenses = (req, res) => {
 };
 
 // To find the user by their ID
-app.findeUser= (req, res) => {
-  const id = req.userId
+app.findeUser = (req, res) => {
+  const id = req.userId;
   User.findByPk(id)
     .then((result) => {
       res.send(result);
     })
     .catch((err) => console.log(err));
 };
-
 
 // To delete th expenses
 app.deleteExpenses = (req, res) => {
@@ -132,7 +135,6 @@ app.deleteExpenses = (req, res) => {
     });
 };
 
-
 /**
  *
  * @param {*} req
@@ -154,44 +156,40 @@ app.getExpensesByMonth = async (req, res) => {
   }
 };
 
-
-// For premium user 
+// For premium user
 app.leadBoard = (req, res) => {
   Expense.findAll()
     .then((exp) => {
       res.send(exp);
     })
     .catch((err) => console.error("Error fetching Expenses:", err));
-}
+};
 
 app.isPremium = (req, res) => {
-  let id = req.userId 
+  let id = req.userId;
   User.findByPk(id)
     .then((result) => {
       res.send(result);
     })
     .catch((err) => console.error("Error fetching Expenses:", err));
-}
+};
 
-// 
+//
 app.perUserTotal = async (req, res) => {
   try {
     // Groupby technic
-    const expenses = await Expense.findAll({ 
+    const expenses = await Expense.findAll({
       attributes: [
         "UserId",
-        [sequelize.fn('sum', sequelize.col('amount')), 'total_cost']
+        [sequelize.fn("sum", sequelize.col("amount")), "total_cost"],
       ],
-      group: ['UserId']
-    })
-    res.send(expenses)
+      group: ["UserId"],
+    });
+    res.send(expenses);
   } catch (error) {
     console.error("Error retrieving expenses:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
-
-
 
 module.exports = app;
