@@ -1,6 +1,5 @@
 // Dependencies
 const { Expense } = require("../model");
-const Sequelize = require("sequelize");
 const User = require("../model/user.model");
 const sequelize = require("../config/database");
 

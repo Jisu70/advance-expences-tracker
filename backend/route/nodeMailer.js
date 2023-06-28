@@ -3,7 +3,9 @@ const router = express.Router();
 
 const nodeMailerController = require('../controller/nodeMailer.controller');
 
+// 
 router.post("/forget", nodeMailerController.forgetPass);
-// router.post('/forget', nodeMailerController.forgetPass);
+
+router.post("/reset-password", nodeMailerController.resetPassword);
 
 module.exports = router;

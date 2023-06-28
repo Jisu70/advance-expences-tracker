@@ -20,7 +20,7 @@ const paymentRoute = require("./route/razorpay.route");
 const nodeMailerRoute = require("./route/nodeMailer");
 
 // Models
-const { Expense, User, Order } = require("./model");
+const { Expense, User, Order , PasswordTable} = require("./model");
 
 // Routes
 app.use("/api/user", userRouter);
@@ -40,6 +40,7 @@ app.use("/api/nodemail", nodeMailerRoute);
     await User.sync();
     await Expense.sync();
     await Order.sync();
+    await PasswordTable.sync();
 
     console.log("Models synced to the database.");
   } catch (error) {
