@@ -7,7 +7,7 @@ const mainController = require("../controller/main.controller");
 
 const checkLogin = require('../middleware/checkLogin.js')
 
-// 
+//  
 router.get("/total-expenses", checkLogin, mainController.totalExpenses);
 
 router.post("/savedata", checkLogin, mainController.saveData);
