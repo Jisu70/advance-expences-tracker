@@ -1,4 +1,4 @@
-const resetPasswordForm = (email) => {
+const resetPasswordForm = (email,token) => {
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -35,13 +35,17 @@ button.addEventListener('click', async (event) => {
         password
     };
     console.log(object);
-    const response = await fetch('https://p3j4h2-3000.csb.app/api/nodemail/update-password', {
+    const response = await fetch('http://localhost:3000/api/nodemail/update-password?token=${token}', {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(object),
     });
+    if (response.status === 200) {
+        alert("Password reset Successfully ");
+        window.location.href = "http://127.0.0.1:5500/frontend/login/login.html";
+      }
 });
 </script>
 </body>

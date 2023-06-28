@@ -261,7 +261,7 @@ const botam = document.getElementById("btn");
 botam.addEventListener("click", (e) => {
   e.preventDefault();
   addExpenses();
-});
+}); 
 showAllExpensesOnScreen();
 showTotalExpenses();
 premiumFeature();

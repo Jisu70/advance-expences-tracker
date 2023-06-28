@@ -3,7 +3,6 @@ const User = require("../model/user.model");
 const bcrypt = require("bcrypt");
 const { PasswordTable } = require("../model/index");
 const resetPasswordForm = require("../views/resetPassword");
-const path = require("path");
 const forgetPass = async (req, res) => {
   const email = req.body.email;
   try {
@@ -37,12 +36,12 @@ const forgetPass = async (req, res) => {
 const sendMail = async (email, token) => {
   try {
     const transporter = nodemailer.createTransport({
-      host: "smtp.ethereal.email",
+      host: 'smtp.ethereal.email',
       port: 587,
       auth: {
-        user: "emory91@ethereal.email",
-        pass: "vBAkkTQAruN21uygz5",
-      },
+        user: 'herminio.padberg@ethereal.email',
+        pass: 'jnTeuYH4NXy43nfp92'
+      }
     });
 
     let message = {
@@ -73,7 +72,7 @@ const resetPassword = async (req, res) => {
     });
     let email = userdata.User.email;
     if (userdata) {
-      res.send(resetPasswordForm(email));
+      res.send(resetPasswordForm(email, token));
     } else {
       res.send("user is not valide");
     }
@@ -84,21 +83,39 @@ const resetPassword = async (req, res) => {
 };
 
 const updatNewPassword = async (req, res) => {
-  try{
-      const email = req.body.email;
-  const hashPassword = await bcrypt.hash(req.body.password, 10);
-  const updatePass = await User.findOne({
-    where: {
-      email: email,
-    },
-  });
-  updatePass.password  = hashPassword ;
-  return updatePass.save()
+  try {
+    const token = req.query.token;
+    const email = req.body.email;
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    const updatedUser = await User.findOne({
+      where: {
+        email: email,
+      },
+    });
+    if (updatedUser) {
+      updatedUser.password = hashedPassword;
+      await updatedUser.save();
+      const passwordTableEntry = await PasswordTable.findOne({
+        where: {
+          id: token,
+          isActive: true,
+        },
+      });
+      if (passwordTableEntry) {
+        passwordTableEntry.isActive = false;
+        await passwordTableEntry.save();
+      }
+      return res.status(200).json({ message: 'Password updated successfully' });
+    } else {
+      return res.status(404).json({ message: 'User not found' });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'An error occurred while updating the password' });
   }
-  catch(err){
-    res.status(500).json(error);
-  }
-}
+};
+
 
 module.exports = {
   forgetPass,

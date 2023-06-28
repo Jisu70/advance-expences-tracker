@@ -4,6 +4,7 @@ require("dotenv").config();
 const crypto = require("crypto");
 const Order = require("../model/order.model");
 const User = require("../model/user.model");
+const paymentMessage = require('../views/paymentSuccessfull')
 
 // Instance
 const razorInstance = new razorpay({
@@ -71,10 +72,7 @@ const verifyPayment = async (req, res) => {
           },
         }
       );
-      res.status(200).json({
-        success: true,
-        message: "Payment verified successfully",
-      });
+      res.status(200).send(paymentMessage())
     } else {
       // Payment verification failed
       res.status(400).json({ success: false, message: "Invalid signature" });
