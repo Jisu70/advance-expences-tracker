@@ -1,7 +1,7 @@
 // Dependencies
 const { Expense } = require("../model");
 const User = require("../model/user.model");
-const sequelize = require("../config/database");
+const Sequelize = require("../config/database");
 
 // Module scaffolding
 const app = {};
@@ -50,7 +50,7 @@ app.allExpenses = async (req, res) => {
     })
   }
 }
-
+// 
 app.allUserTotalExpenses = (req, res) => {
   User.findAll()
     .then((exp) => {
@@ -148,7 +148,7 @@ app.perUserTotal = async (req, res) => {
     const expenses = await Expense.findAll({
       attributes: [
         "UserId",
-        [sequelize.fn("sum", sequelize.col("amount")), "total_cost"],
+        [Sequelize.fn("sum", Sequelize.col("amount")), "total_cost"],
       ],
       group: ["UserId"],
     });
@@ -158,5 +158,29 @@ app.perUserTotal = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+
+// Function to fetch expenses month-wise and date-wise
+ app.getExpensesByMonthAndDate = async (req, res) => {
+  console.log("i called")
+  try {
+    const expenses = await Expense.findAll({
+      attributes: [
+        [Sequelize.fn('DATE', Sequelize.col('createdAt')), 'date'],
+        [Sequelize.fn('MONTH', Sequelize.col('createdAt')), 'month'],
+        [Sequelize.fn('SUM', Sequelize.col('amount')), 'totalamount']
+      ],
+      group: [
+        Sequelize.fn('DATE', Sequelize.col('createdAt')),
+        Sequelize.fn('MONTH', Sequelize.col('createdAt'))
+      ],
+    });
+    res.status(200).json(expenses)
+  } catch (error) {
+    console.error('Error retrieving expenses:', error);
+    throw error;
+  }
+}
 
 module.exports = app;
