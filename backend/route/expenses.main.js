@@ -28,5 +28,7 @@ router.get("/is-premium", checkLogin, mainController.isPremium);
 router.get("/perusertotal", mainController.perUserTotal);
 // 
 router.get("/month", mainController.getExpensesByMonthAndDate);
+// Download exp
+router.get("/download", checkLogin, mainController.downloadExpenses);
 
 module.exports = router;

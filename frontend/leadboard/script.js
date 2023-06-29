@@ -38,7 +38,7 @@ const allUserTotalExpenses = async () => {
 
 // Table 
 
-function buildTable(data) {
+const buildTable = async (data) => {
   const table = document.getElementById('myTable')
 
   for (let i = 0; i < data.length; i++) {
@@ -50,5 +50,30 @@ function buildTable(data) {
     table.innerHTML += row
   }
 }
+
+const downloadFunction = async () => {
+  try {
+    const token = localStorage.getItem('token')
+    const response = await fetch(`${API_URL}/download`,{
+      method : "GET",
+      headers : {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    if(response.status === 200 ){
+      const link = document.createElement('a') ;
+      link.href = response.data.fileUrl ;
+      link.download = 'myexpenses.csv' ;
+      link.click()
+    }
+  } catch (error) {
+    throw new   error 
+  }
+}
+
+
+
+
 
 leadBoard()

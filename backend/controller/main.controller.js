@@ -2,6 +2,7 @@
 const { Expense } = require("../model");
 const User = require("../model/user.model");
 const Sequelize = require("../config/database");
+const AWS = require('aws-sdk')
 
 // Module scaffolding
 const app = {};
@@ -162,7 +163,7 @@ app.perUserTotal = async (req, res) => {
 
 
 // Function to fetch expenses month-wise and date-wise
- app.getExpensesByMonthAndDate = async (req, res) => {
+app.getExpensesByMonthAndDate = async (req, res) => {
   console.log("i called")
   try {
     const expenses = await Expense.findAll({
@@ -181,6 +182,25 @@ app.perUserTotal = async (req, res) => {
     console.error('Error retrieving expenses:', error);
     throw error;
   }
+}
+
+app.downloadExpenses = async (req, res) => {
+  try {
+    const id = req.userId;
+    const result = await Expense.findAll({id})
+    const stringifyResult = await JSON.stringify(result) 
+    const fileName = 'Expense.txt' ;
+    const url = uploadToS3(stringifyResult, fileName)
+    res.status(200).json({ success :  true , URL : url })
+
+  } catch (error) { 
+    res.status(500).json({ error })
+  }
+}
+
+app.uploadToS3 = async (req, res) => {
+  
+
 }
 
 module.exports = app;
