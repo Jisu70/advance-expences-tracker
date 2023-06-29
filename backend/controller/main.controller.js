@@ -51,14 +51,8 @@ app.allExpenses = async (req, res) => {
   }
 }
 
-// To get all the expenses
-/**
- * Populate via Foregin key
- * @param {*} req
- * @param {*} res
- */
 app.allUserTotalExpenses = (req, res) => {
-  Expense.findAll({ include: [User] })
+  User.findAll()
     .then((exp) => {
       res.send(exp);
     })

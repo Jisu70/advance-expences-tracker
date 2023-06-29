@@ -18,8 +18,7 @@ const leadBoard = async () => {
   const data = await response.json();
 
   if (data.isPremium === true) {
-
-
+    allUserTotalExpenses()
   } else {
     alert(" you are not a premium user ")
   }
@@ -33,41 +32,23 @@ const allUserTotalExpenses = async () => {
       "Content-Type": "application/json",
     },
   });
-
   const resultArray = await response.json();
-
-  const expensesByUser = {};
-
-  resultArray.forEach(user => {
-    if (expensesByUser[user.User.name]) {
-      expensesByUser[user.User.name] += parseFloat(user.amount);
-    } else {
-      expensesByUser[user.User.name] = parseFloat(user.amount);
-    }
-  });
-  console.log(expensesByUser)
-  let parent = document.getElementById('list-group');
-  const sortedExp = Object.entries(expensesByUser).sort((a, b) => b[1] - a[1]);
-  parent.innerHTML = '';
-
-  sortedExp.forEach(([key, value]) => {
-    let li = document.createElement('li');
-    li.className = 'list-group-item';
-    li.textContent = `${key} total expenses: ${value}`;
-    parent.appendChild(li);
-  });
-
+  buildTable(resultArray)
 }
 
+// Table 
 
+function buildTable(data) {
+  const table = document.getElementById('myTable')
 
-allUserTotalExpenses()
-
-
-
-
-
-
-
+  for (let i = 0; i < data.length; i++) {
+    let row = `<tr>
+              <td>${data[i].id}</td>
+              <td>${data[i].name}</td>
+              <td>${data[i].totalamount}</td>
+             </tr>`
+    table.innerHTML += row
+  }
+}
 
 leadBoard()
