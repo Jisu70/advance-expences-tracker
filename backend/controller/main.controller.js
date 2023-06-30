@@ -183,24 +183,51 @@ app.getExpensesByMonthAndDate = async (req, res) => {
     throw error;
   }
 }
+// 
+const uploadToS3 = async (data, fileName) => {
+  try {
+    const s3bucket = new AWS.S3({
+      accessKeyId: process.env.IAM_USER_KEY,
+      secretAccessKey: process.env.IAM_USER_SECRET,
+    });
+    const params = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: fileName,
+      Body: data,
+      ACL: 'public-read'
+    };
+    // Returning the ashyncronus task 
+    return new Promise((resolve, reject) => {
+      s3bucket.upload(params, (err, s3response) => {
+        if(err){
+          reject(err)
+        }else{
+          resolve(s3response.Location)
+        }
+      })
+    })
+    //  Or we also can do that to retun the promise
+    // const uploadPromise = await s3bucket.upload(params).promise();
+    // return uploadPromise.Location;
+  } catch (error) {
+    throw error;
+  }
+
+}
 
 app.downloadExpenses = async (req, res) => {
   try {
     const id = req.userId;
-    const result = await Expense.findAll({id})
-    const stringifyResult = await JSON.stringify(result) 
-    const fileName = 'Expense.txt' ;
-    const url = uploadToS3(stringifyResult, fileName)
-    res.status(200).json({ success :  true , URL : url })
-
-  } catch (error) { 
-    res.status(500).json({ error })
+    const result = await Expense.findAll({ id });
+    const stringifyResult = JSON.stringify(result);
+    const fileName = `Expense${new Date()}.txt`;
+    const url = await uploadToS3(stringifyResult, fileName);
+    console.log(url);
+    res.status(200).json({ success: true, URL: url });
+  } catch (error) {
+    res.status(500).json({ error });
   }
-}
+};
 
-app.uploadToS3 = async (req, res) => {
-  
-
-}
 
 module.exports = app;
