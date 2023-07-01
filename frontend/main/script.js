@@ -28,75 +28,135 @@ async function addExpenses() {
   amount.value = "";
   item.value = "";
 }
-// To display all expences of user  
-async function showAllExpensesOnScreen() {
-  const token = localStorage.getItem("token");
 
-  const response = await fetch(`http://localhost:3000/api/main/all-expenses`, {
+// To display all expences of user  
+// async function showAllExpensesOnScreen() {
+//   const token = localStorage.getItem("token");
+//   const response = await fetch(`http://localhost:3000/api/main/all-expenses`, {
+//     method: "GET",
+//     headers: {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${token}`,
+//     },
+//   });
+//   // Check the response status code
+//   if (response.status === 401) {
+//     const loginPageLink = "http://127.0.0.1:5500/frontend/login/login.html";
+//     const confirmMessage = `Please click OK to go to the login page.`;
+//     if (window.confirm(confirmMessage)) {
+//       window.location.href = loginPageLink;
+//     }
+//     return;
+//   }
+//   const {result} = await response.json();
+//   const itemList = document.getElementsByClassName("list-group")[0];
+//   // Clear the existing content
+//   itemList.innerHTML = "";
+//   result.forEach((item) => {
+//     const listItem = document.createElement("li");
+//     listItem.className = "list-group-item";
+//     listItem.style.backgroundColor = "#6dbd9f4d";
+//     listItem.style.color = "#000000";
+//     listItem.textContent = `Item Name : ${item.item} , Item Price : ${item.amount}    Category  : ${item.category} `;
+//     const editButton = document.createElement("btn");
+//     editButton.className = "btn btn-info";
+//     editButton.style.float = "right";
+//     editButton.textContent = "Edit";
+//     editButton.addEventListener("click", () =>
+//       editItemDetails(item.id, item.item, item.amount, item.category)
+//     );
+//     const deleteButton = document.createElement("button");
+//     deleteButton.className = "btn btn-danger";
+//     deleteButton.style.float = "right";
+//     deleteButton.textContent = "Delete";
+//     deleteButton.addEventListener("click", () => deleteItem(item.id));
+//     listItem.appendChild(editButton);
+//     listItem.appendChild(deleteButton);
+//     itemList.appendChild(listItem);
+//   });
+// }
+
+
+// Display expenses using pagination 
+let currentPage = 1;
+async function showAllExpensesOnScreen(page) {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`http://localhost:3000/api/main/pagination?page=${page}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
-
   // Check the response status code
   if (response.status === 401) {
     const loginPageLink = "http://127.0.0.1:5500/frontend/login/login.html";
     const confirmMessage = `Please click OK to go to the login page.`;
-
     if (window.confirm(confirmMessage)) {
       window.location.href = loginPageLink;
     }
-
     return;
   }
-
-  const {result} = await response.json();
-
+  const { result } = await response.json();
   const itemList = document.getElementsByClassName("list-group")[0];
-
   // Clear the existing content
   itemList.innerHTML = "";
-
-  result.forEach((item) => {
+  result.rows.forEach((item) => {
     const listItem = document.createElement("li");
-
     listItem.className = "list-group-item";
-
     listItem.style.backgroundColor = "#6dbd9f4d";
-
     listItem.style.color = "#000000";
-
-    listItem.textContent = `Item Name : ${item.item} , Item Price : ${item.amount}    Category  : ${item.category} `;
-
-    const editButton = document.createElement("btn");
-
+    listItem.textContent = `Item Name: ${item.item}, Item Price: ${item.amount}, Category: ${item.category}`;
+    const editButton = document.createElement("button");
     editButton.className = "btn btn-info";
-
     editButton.style.float = "right";
-
     editButton.textContent = "Edit";
-
     editButton.addEventListener("click", () =>
       editItemDetails(item.id, item.item, item.amount, item.category)
     );
-
     const deleteButton = document.createElement("button");
-
     deleteButton.className = "btn btn-danger";
-
     deleteButton.style.float = "right";
-
     deleteButton.textContent = "Delete";
-
     deleteButton.addEventListener("click", () => deleteItem(item.id));
-
     listItem.appendChild(editButton);
     listItem.appendChild(deleteButton);
     itemList.appendChild(listItem);
   });
+  displayPaginationButtons(result.count);
 }
+function displayPaginationButtons(totalCount) {
+  const paginationDiv = document.getElementById('pagination');
+  paginationDiv.innerHTML = '';
+  const totalPages = Math.ceil(totalCount / limit);
+  if (currentPage > 1) {
+    const prevButton = createPaginationButton('Prev', currentPage - 1);
+    paginationDiv.appendChild(prevButton);
+  }
+  for (let i = 1; i <= totalPages; i++) {
+    const pageButton = createPaginationButton(i, i);
+    paginationDiv.appendChild(pageButton);
+  }
+  if (currentPage < totalPages) {
+    const nextButton = createPaginationButton('Next', currentPage + 1);
+    paginationDiv.appendChild(nextButton);
+  }
+}
+function createPaginationButton(text, page) {
+  const button = document.createElement('button');
+  button.textContent = text;
+  button.addEventListener('click', () => {
+    currentPage = page;
+    showAllExpensesOnScreen(currentPage);
+  });
+  return button;
+}
+// Call the function initially to display the first page of expenses
+showAllExpensesOnScreen(currentPage);
+
+
+
+
 //  TO update existing expences
 async function editItemDetails(id, itemvalue, itemprice, itemcategory) {
   const item = prompt(" Change The Item name ", itemvalue);

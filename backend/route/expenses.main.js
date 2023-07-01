@@ -1,9 +1,9 @@
-// Dependencies
+ // Dependencies
 const express = require("express");
 
 const router = express.Router();
 
-const {expensesController} = require('../controller/');
+const { expensesController } = require('../controller/');
 
 const checkLogin = require('../middleware/checkLogin.js')
 
@@ -32,5 +32,8 @@ router.get("/month", expensesController.getExpensesByMonthAndDate);
 router.get("/download", checkLogin, expensesController.downloadExpenses);
 // All download links of a user
 router.get("/alllinks", checkLogin, expensesController.usersAllExpenseslink);
+
+// For pagination 
+router.get("/pagination", checkLogin, expensesController.pagination);
 
 module.exports = router;
