@@ -1,13 +1,13 @@
 // Import the route files
-const userRouter = require('./user.route');
-const expenseRouter = require('./expenses.main');
-const paymentRouter = require('./razorpay.route');
-const nodeMailerRoute = require('./nodeMailer');
+const userController = require('./user.controller');
+const expensesController = require('./expenses.controller');
+const paymentController = require('./razorpay.controller');
+const nodeMailerController = require('./nodeMailer.controller');
 
 // Export all the routes
 module.exports = {
-  userRouter,
-  expenseRouter,
-  paymentRouter,
-  nodeMailerRoute,
+  userController,
+  expensesController,
+  paymentController,
+  nodeMailerController,
 };

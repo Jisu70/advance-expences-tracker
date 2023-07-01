@@ -39,10 +39,10 @@ const sendMail = async (email, token) => {
       host: 'smtp.ethereal.email',
       port: 587,
       auth: {
-        user: 'herminio.padberg@ethereal.email',
-        pass: 'jnTeuYH4NXy43nfp92'
+          user: 'josefina86@ethereal.email',
+          pass: 'D3scv4p3cCuVyaRRge'
       }
-    });
+  });
 
     let message = {
       from: '"Sudipta Jana 👻" <sudipta@gmail.com>',
@@ -87,7 +87,7 @@ const updatNewPassword = async (req, res) => {
     const token = req.query.token;
     const email = req.body.email;
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
+    console.log("token", token)
     const updatedUser = await User.findOne({
       where: {
         email: email,
@@ -102,6 +102,8 @@ const updatNewPassword = async (req, res) => {
           isActive: true,
         },
       });
+// After saving changes
+console.log("Updated isActive value:", passwordTableEntry.isActive);
       if (passwordTableEntry) {
         passwordTableEntry.isActive = false;
         await passwordTableEntry.save();

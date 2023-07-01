@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const userController = require('../controller/user.controller');
+const {userController} = require('../controller');
 // Middleware 
 // const checkLogin = require('../middleware/checkLogin.js')
 // To save the userdata

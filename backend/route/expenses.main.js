@@ -3,7 +3,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const expensesController = require("../controller/expenses.controller");
+const {expensesController} = require('../controller/');
 
 const checkLogin = require('../middleware/checkLogin.js')
 
@@ -14,11 +14,11 @@ router.post("/savedata", checkLogin, expensesController.saveData);
 
 router.get("/all-expenses", checkLogin, expensesController.allExpenses);
 
-router.get("/single-user/", checkLogin, expensesController.findeUser);
-
 router.put("/update-expenses", expensesController.updateExpenses);
 
 router.delete("/delete-expenses", expensesController.deleteExpenses);
+
+router.get("/single-user/", checkLogin, expensesController.findUser);
 
 // To show everyone total expences 
 router.get("/lead-board", expensesController.allUserTotalExpenses);

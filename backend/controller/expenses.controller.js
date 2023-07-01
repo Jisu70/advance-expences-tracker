@@ -99,16 +99,17 @@ const totalExpenses = (req, res) => {
     });
 };
 
-// // To find the user by their ID
-// const indeUser = (req, res) => {
-//   const id = req.userId;
-//   User.findByPk(id)
-//     .then((result) => {
-//       res.send(result);
-//     })
-//     .catch((err) => console.log(err));
-// };
+// To find the user by their ID
+const findUser = (req, res) => {
+  const id = req.userId;
+  User.findByPk(id)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => console.log(err));
+};
 
+// To delete the expenses
 const deleteExpenses = async (req, res) => {
   const id = req.body.id;
   try {
@@ -135,7 +136,7 @@ const isPremium = (req, res) => {
     .catch((err) => console.error("Error fetching Expenses:", err));
 };
 
-//
+// 
 const perUserTotal = async (req, res) => {
   try {
     // Groupby technic
@@ -196,6 +197,10 @@ module.exports = {
   allUserTotalExpenses,
   updateExpenses,
   totalExpenses,
-  
-  
+  deleteExpenses,
+  isPremium,
+  perUserTotal,
+  getExpensesByMonthAndDate,
+  downloadExpenses,
+  findUser
 };

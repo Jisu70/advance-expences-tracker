@@ -14,14 +14,14 @@ app.use(express.json());
 const dbConnection = require("./config/database");
 
 // Impoting Routes
-const { userRouter, expenseRuter, paymentRouter, nodeMailerRoute,} = require("./route");
+const { userRouter, expenseRouter, paymentRouter, nodeMailerRoute,} = require("./route");
 
 // Models
 const { Expense, User, Order, PasswordTable } = require("./model");
 
 // Routes
 app.use("/api/user", userRouter);
-app.use("/api/main", expenseRuter);
+app.use("/api/main", expenseRouter);
 app.use("/api/razorpay", paymentRouter);
 app.use("/api/nodemail", nodeMailerRoute);
 

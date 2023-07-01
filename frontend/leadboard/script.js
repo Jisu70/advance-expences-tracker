@@ -56,10 +56,8 @@ downloadFunction.addEventListener('click', async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response)
     if (response.ok) {
       const data = await response.json();
-      console.log(data)
       const link = document.createElement('a');
       link.href = data.URL;
       link.download = 'myexpenses.csv';

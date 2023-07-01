@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 
-const nodeMailerController = require("../controller/nodeMailer.controller");
+const {nodeMailerController} = require("../controller");
 
 router.post("/forget", nodeMailerController.forgetPass);
 
