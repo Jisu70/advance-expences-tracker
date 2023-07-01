@@ -5,7 +5,7 @@ const cors = require("cors");
 const app = express();
 require("dotenv").config();
 
-
+// To handel cros issue
 app.use(cors());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(express.json());
@@ -14,21 +14,18 @@ app.use(express.json());
 const dbConnection = require("./config/database");
 
 // Impoting Routes
-const userRouter = require("./route/user.route");
-const mainRouter = require("./route/expenses.main");
-const paymentRoute = require("./route/razorpay.route");
-const nodeMailerRoute = require("./route/nodeMailer");
+const { userRouter, expenseRuter, paymentRouter, nodeMailerRoute,} = require("./route");
 
 // Models
-const { Expense, User, Order , PasswordTable} = require("./model");
+const { Expense, User, Order, PasswordTable } = require("./model");
 
 // Routes
 app.use("/api/user", userRouter);
-app.use("/api/main", mainRouter);
-app.use("/api/razorpay", paymentRoute);
+app.use("/api/main", expenseRuter);
+app.use("/api/razorpay", paymentRouter);
 app.use("/api/nodemail", nodeMailerRoute);
 
-// To define the models in the database
+// Database connection
 (async () => {
   try {
     await dbConnection.authenticate();

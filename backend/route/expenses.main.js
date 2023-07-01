@@ -3,32 +3,32 @@ const express = require("express");
 
 const router = express.Router();
 
-const mainController = require("../controller/main.controller");
+const expensesController = require("../controller/expenses.controller");
 
 const checkLogin = require('../middleware/checkLogin.js')
 
 //  
-router.get("/total-expenses", checkLogin, mainController.totalExpenses);
+router.get("/total-expenses", checkLogin, expensesController.totalExpenses);
 
-router.post("/savedata", checkLogin, mainController.saveData);
+router.post("/savedata", checkLogin, expensesController.saveData);
 
-router.get("/all-expenses", checkLogin, mainController.allExpenses);
+router.get("/all-expenses", checkLogin, expensesController.allExpenses);
 
-router.get("/single-user/", checkLogin, mainController.findeUser);
+router.get("/single-user/", checkLogin, expensesController.findeUser);
 
-router.put("/update-expenses", mainController.updateExpenses);
+router.put("/update-expenses", expensesController.updateExpenses);
 
-router.delete("/delete-expenses", mainController.deleteExpenses);
+router.delete("/delete-expenses", expensesController.deleteExpenses);
 
 // To show everyone total expences 
-router.get("/lead-board", mainController.allUserTotalExpenses);
+router.get("/lead-board", expensesController.allUserTotalExpenses);
 // check the user is premium or not
-router.get("/is-premium", checkLogin, mainController.isPremium);
+router.get("/is-premium", checkLogin, expensesController.isPremium);
 //
-router.get("/perusertotal", mainController.perUserTotal);
+router.get("/perusertotal", expensesController.perUserTotal);
 // 
-router.get("/month", mainController.getExpensesByMonthAndDate);
+router.get("/month", expensesController.getExpensesByMonthAndDate);
 // Download exp
-router.get("/download", checkLogin, mainController.downloadExpenses);
+router.get("/download", checkLogin, expensesController.downloadExpenses);
 
 module.exports = router;
