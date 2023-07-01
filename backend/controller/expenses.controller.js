@@ -46,7 +46,8 @@ const allExpenses = async (req, res) => {
     });
   }
 };
-//
+
+// 
 const allUserTotalExpenses = (req, res) => {
   User.findAll()
     .then((exp) => {
@@ -209,6 +210,28 @@ const usersAllExpenseslink = async (req, res) => {
 
   }
 }
+const pagination = async (req, res) => {
+  try {
+    const id = req.userId;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 5;
+    const offset = (page - 1) * limit;
+
+    // Fetch the data from the database with pagination
+    const result = await Expense.findAndCountAll({
+      where: {
+        userId: id,
+      },
+      limit,
+      offset,
+    });
+
+    res.status(200).json({ result });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+}
+
 
 module.exports = {
   saveData,
@@ -222,5 +245,6 @@ module.exports = {
   getExpensesByMonthAndDate,
   downloadExpenses,
   findUser,
-  usersAllExpenseslink
+  usersAllExpenseslink,
+  pagination
 };
