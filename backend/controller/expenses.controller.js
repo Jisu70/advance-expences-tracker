@@ -2,17 +2,10 @@
 const { Expense } = require("../model");
 const User = require("../model/user.model");
 const Sequelize = require("../config/database");
-const AWS = require('aws-sdk')
-
-// Module scaffolding
-const app = {};
-
-app.mainRoute = (req, res) => {
-  res.end(" THere is Noting ");
-};
+const { uploadToS3 } = require("../services/s3services");
 
 // To save the Expenses in the database
-app.saveData = async (req, res) => {
+const saveData = async (req, res) => {
   try {
     const userId = req.userId;
     const item = req.body.item;
@@ -34,25 +27,25 @@ app.saveData = async (req, res) => {
 };
 
 // To get all the expenses
-app.allExpenses = async (req, res) => {
+const allExpenses = async (req, res) => {
   try {
     const userId = req.userId;
     console.log("userId :", userId);
     let result = await Expense.findAll({
       where: {
-        userId: userId
-      }
-    })
-    res.status(200).json({ result })
+        userId: userId,
+      },
+    });
+    res.status(200).json({ result });
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: err
-    })
+      message: err,
+    });
   }
-}
-// 
-app.allUserTotalExpenses = (req, res) => {
+};
+//
+const allUserTotalExpenses = (req, res) => {
   User.findAll()
     .then((exp) => {
       res.send(exp);
@@ -61,7 +54,7 @@ app.allUserTotalExpenses = (req, res) => {
 };
 
 // To edit or update the expenses
-app.updateExpenses = (req, res) => {
+const updateExpenses = (req, res) => {
   const userId = req.body.id;
   const updatedItem = req.body.item;
   const updatedAmount = req.body.amount;
@@ -90,7 +83,7 @@ app.updateExpenses = (req, res) => {
 };
 
 // To calculate the total expenses
-app.totalExpenses = (req, res) => {
+const totalExpenses = (req, res) => {
   Expense.findAll({ where: { userId: req.userId } })
     .then((expenses) => {
       if (!expenses) {
@@ -106,34 +99,34 @@ app.totalExpenses = (req, res) => {
     });
 };
 
-// To find the user by their ID
-app.findeUser = (req, res) => {
-  const id = req.userId;
-  User.findByPk(id)
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((err) => console.log(err));
-};
+// // To find the user by their ID
+// const indeUser = (req, res) => {
+//   const id = req.userId;
+//   User.findByPk(id)
+//     .then((result) => {
+//       res.send(result);
+//     })
+//     .catch((err) => console.log(err));
+// };
 
-app.deleteExpenses = async (req, res) => {
+const deleteExpenses = async (req, res) => {
   const id = req.body.id;
   try {
     const expense = await Expense.findByPk(id);
     if (!expense) {
-      return res.status(404).json({ error: 'Expense not found.' });
+      return res.status(404).json({ error: "Expense not found." });
     }
     await expense.destroy();
-    console.log('Item DESTROYED');
-    res.json({ message: 'Item deleted successfully.' });
+    console.log("Item DESTROYED");
+    res.json({ message: "Item deleted successfully." });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: 'An error occurred.' });
+    res.status(500).json({ error: "An error occurred." });
   }
 };
 
 // Is user premium
-app.isPremium = (req, res) => {
+const isPremium = (req, res) => {
   let id = req.userId;
   User.findByPk(id)
     .then((result) => {
@@ -143,7 +136,7 @@ app.isPremium = (req, res) => {
 };
 
 //
-app.perUserTotal = async (req, res) => {
+const perUserTotal = async (req, res) => {
   try {
     // Groupby technic
     const expenses = await Expense.findAll({
@@ -160,62 +153,30 @@ app.perUserTotal = async (req, res) => {
   }
 };
 
-
-
 // Function to fetch expenses month-wise and date-wise
-app.getExpensesByMonthAndDate = async (req, res) => {
-  console.log("i called")
+const getExpensesByMonthAndDate = async (req, res) => {
+  console.log("i called");
   try {
     const expenses = await Expense.findAll({
       attributes: [
-        [Sequelize.fn('DATE', Sequelize.col('createdAt')), 'date'],
-        [Sequelize.fn('MONTH', Sequelize.col('createdAt')), 'month'],
-        [Sequelize.fn('SUM', Sequelize.col('amount')), 'totalamount']
+        [Sequelize.fn("DATE", Sequelize.col("createdAt")), "date"],
+        [Sequelize.fn("MONTH", Sequelize.col("createdAt")), "month"],
+        [Sequelize.fn("SUM", Sequelize.col("amount")), "totalamount"],
       ],
       group: [
-        Sequelize.fn('DATE', Sequelize.col('createdAt')),
-        Sequelize.fn('MONTH', Sequelize.col('createdAt'))
+        Sequelize.fn("DATE", Sequelize.col("createdAt")),
+        Sequelize.fn("MONTH", Sequelize.col("createdAt")),
       ],
     });
-    res.status(200).json(expenses)
+    res.status(200).json(expenses);
   } catch (error) {
-    console.error('Error retrieving expenses:', error);
+    console.error("Error retrieving expenses:", error);
     throw error;
   }
-}
-// 
-const uploadToS3 = async (data, fileName) => {
-  try {
-    const s3bucket = new AWS.S3({
-      accessKeyId: process.env.IAM_USER_KEY,
-      secretAccessKey: process.env.IAM_USER_SECRET,
-    });
-    const params = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: fileName,
-      Body: data,
-      ACL: 'public-read'
-    };
-    // Returning the ashyncronus task 
-    return new Promise((resolve, reject) => {
-      s3bucket.upload(params, (err, s3response) => {
-        if(err){
-          reject(err)
-        }else{
-          resolve(s3response.Location)
-        }
-      })
-    })
-    //  Or we also can do that to retun the promise
-    // const uploadPromise = await s3bucket.upload(params).promise();
-    // return uploadPromise.Location;
-  } catch (error) {
-    throw error;
-  }
+};
+//
 
-}
-
-app.downloadExpenses = async (req, res) => {
+const downloadExpenses = async (req, res) => {
   try {
     const id = req.userId;
     const result = await Expense.findAll({ id });
@@ -229,5 +190,12 @@ app.downloadExpenses = async (req, res) => {
   }
 };
 
-
-module.exports = app;
+module.exports = {
+  saveData,
+  allExpenses,
+  allUserTotalExpenses,
+  updateExpenses,
+  totalExpenses,
+  
+  
+};
