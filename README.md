@@ -88,4 +88,4 @@ This project is licensed under the [MIT License](LICENSE).
 - [Bootstrap](https://getbootstrap.com/)
 
 ## Contact
-If you have any questions or suggestions, feel free to reach out to the project maintainer at [your_email@example.com](mailto:your_email@example.com).
+If you have any questions or suggestions, feel free to reach out to the project maintainer at (mailto:sudiptajana70@gmail.com).
