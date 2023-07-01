@@ -98,6 +98,7 @@ async function showAllExpensesOnScreen(page) {
     return;
   }
   const { result } = await response.json();
+  console.log(result)
   const itemList = document.getElementsByClassName("list-group")[0];
   // Clear the existing content
   itemList.innerHTML = "";
@@ -123,12 +124,13 @@ async function showAllExpensesOnScreen(page) {
     listItem.appendChild(deleteButton);
     itemList.appendChild(listItem);
   });
+  console.log(result.count)
   displayPaginationButtons(result.count);
 }
 function displayPaginationButtons(totalCount) {
   const paginationDiv = document.getElementById('pagination');
   paginationDiv.innerHTML = '';
-  const totalPages = Math.ceil(totalCount / limit);
+  const totalPages = Math.ceil(totalCount / 5);
   if (currentPage > 1) {
     const prevButton = createPaginationButton('Prev', currentPage - 1);
     paginationDiv.appendChild(prevButton);
@@ -143,14 +145,22 @@ function displayPaginationButtons(totalCount) {
   }
 }
 function createPaginationButton(text, page) {
-  const button = document.createElement('button');
-  button.textContent = text;
-  button.addEventListener('click', () => {
+  const button = document.createElement('li');
+  button.classList.add('page-item');
+  
+  const link = document.createElement('a');
+  link.classList.add('page-link');
+  link.href = '#';
+  link.textContent = text;
+  link.addEventListener('click', () => {
     currentPage = page;
     showAllExpensesOnScreen(currentPage);
   });
+  
+  button.appendChild(link);
   return button;
 }
+
 // Call the function initially to display the first page of expenses
 showAllExpensesOnScreen(currentPage);
 
@@ -168,7 +178,7 @@ async function editItemDetails(id, itemvalue, itemprice, itemcategory) {
     amount,
     category,
   };
-  const response = await fetch(`${API_URL}/update-expenses`, {
+  await fetch(`${API_URL}/update-expenses`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -321,7 +331,7 @@ const botam = document.getElementById("btn");
 botam.addEventListener("click", (e) => {
   e.preventDefault();
   addExpenses();
-}); 
-showAllExpensesOnScreen();
+});
+// showAllExpensesOnScreen();
 showTotalExpenses();
 premiumFeature();
