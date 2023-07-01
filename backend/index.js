@@ -2,10 +2,24 @@
 const express = require("express");
 const bodyparser = require("body-parser");
 const cors = require("cors");
-const app = express();
+const helmet = require("helmet");
+const compression = require("compression");
+const morgan = require("morgan");
+const fs = require("fs");
+const path = require("path");
 require("dotenv").config();
 
-// To handel cros issue
+// Create a write stream for the access log
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  { flags: "a" }
+);
+const app = express();
+
+// Use morgan middleware with the custom log stream
+app.use(morgan("combined", { stream: accessLogStream }));
+
+// To handle CORS issue
 app.use(cors());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(express.json());
@@ -13,8 +27,13 @@ app.use(express.json());
 // Database connection
 const dbConnection = require("./config/database");
 
-// Impoting Routes
-const { userRouter, expenseRouter, paymentRouter, nodeMailerRoute,} = require("./route");
+// Importing Routes
+const {
+  userRouter,
+  expenseRouter,
+  paymentRouter,
+  nodeMailerRoute,
+} = require("./route");
 
 // Models
 const { Expense, User, Order, PasswordTable, Urltable } = require("./model");
@@ -24,6 +43,11 @@ app.use("/api/user", userRouter);
 app.use("/api/main", expenseRouter);
 app.use("/api/razorpay", paymentRouter);
 app.use("/api/nodemail", nodeMailerRoute);
+
+// Helmet
+app.use(helmet());
+// Compression
+app.use(compression());
 
 // Database connection
 (async () => {
@@ -47,7 +71,7 @@ app.use("/api/nodemail", nodeMailerRoute);
 })();
 
 // Starting the server
-app.listen(3000, (err) => {
+app.listen(process.env.PORT || 3000, (err) => {
   if (err) throw err;
-  console.log("App listening on port 3000");
+  console.log(`App listening on port ${process.env.PORT}`);
 });

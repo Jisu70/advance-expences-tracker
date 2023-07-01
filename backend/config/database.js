@@ -1,22 +1,25 @@
 // Dependencies
 
-const Sequelize = require('sequelize') ;
+// const Sequelize = require('sequelize') ;
 
-const sequelize = new Sequelize('advance_expenses_tracker', 'root', '1234567890', {
-  dialect : 'mysql',
-  host : 'localhost'
-})
+// const sequelize = new Sequelize('advance_expenses_tracker', 'root', '1234567890', {
+//   dialect : 'mysql',
+//   host : 'localhost'
+// })
 
-module.exports = sequelize
+// module.exports = sequelize
 
 // Dependencies
-// for online database
-// const Sequelize = require("sequelize");
+const Sequelize = require("sequelize");
 
-// const sequelize = new Sequelize("todo_application", "sudipta70", "123456789", {
-//   host: "db4free.net",
-//   dialect: "mysql",
-//   // logging: false, // This will stop the connection message from console
-// });
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USERNAME,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: "mysql",
+  }
+);
 
-// module.exports = sequelize;
+module.exports = sequelize;
