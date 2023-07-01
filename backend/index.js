@@ -17,7 +17,7 @@ const dbConnection = require("./config/database");
 const { userRouter, expenseRouter, paymentRouter, nodeMailerRoute,} = require("./route");
 
 // Models
-const { Expense, User, Order, PasswordTable } = require("./model");
+const { Expense, User, Order, PasswordTable, Urltable } = require("./model");
 
 // Routes
 app.use("/api/user", userRouter);
@@ -38,6 +38,7 @@ app.use("/api/nodemail", nodeMailerRoute);
     await Expense.sync();
     await Order.sync();
     await PasswordTable.sync();
+    await Urltable.sync();
 
     console.log("Models synced to the database.");
   } catch (error) {

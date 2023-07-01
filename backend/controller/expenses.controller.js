@@ -1,8 +1,10 @@
+
 // Dependencies
 const { Expense } = require("../model");
 const User = require("../model/user.model");
 const Sequelize = require("../config/database");
 const { uploadToS3 } = require("../services/s3services");
+const { Urltable } = require('../model/index')
 
 // To save the Expenses in the database
 const saveData = async (req, res) => {
@@ -185,11 +187,28 @@ const downloadExpenses = async (req, res) => {
     const fileName = `Expense${new Date()}.txt`;
     const url = await uploadToS3(stringifyResult, fileName);
     console.log(url);
+    const response = await Urltable.create({
+      url: url,
+      UserId: id
+    })
+    console.log(response)
     res.status(200).json({ success: true, URL: url });
   } catch (error) {
     res.status(500).json({ error });
   }
 };
+
+
+const usersAllExpenseslink = async (req, res) => {
+  try {
+    const id = req.userId;
+    const result = await Urltable.findAll({ where: { UserId: id } });
+    res.status(200).json({ result })
+  } catch (error) {
+    res.status(500).json({ error });
+
+  }
+}
 
 module.exports = {
   saveData,
@@ -202,5 +221,6 @@ module.exports = {
   perUserTotal,
   getExpensesByMonthAndDate,
   downloadExpenses,
-  findUser
+  findUser,
+  usersAllExpenseslink
 };

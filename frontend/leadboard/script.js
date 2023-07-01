@@ -70,5 +70,45 @@ downloadFunction.addEventListener('click', async () => {
   }
 });
 
+function showPopup() {
+  document.getElementById("popup").style.display = "block";
+}
 
+function closePopup() {
+  document.getElementById("popup").style.display = "none";
+}
+
+const showLinks = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/alllinks`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const { result } = await response.json();
+    addLinksToPage(result);
+    console.log(result);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const addLinksToPage = (array) => {
+  const parent = document.getElementById('linkbox');
+  array.forEach((element, index) => {
+    const link = document.createElement('li');
+    const anchor = document.createElement('a');
+    anchor.href = element.url;
+    anchor.textContent = `link ${index + 1} downloaded time ${element.createdAt}`;
+    link.appendChild(anchor);
+    parent.appendChild(link);
+  });
+};
+
+
+
+showLinks()
 leadBoard()

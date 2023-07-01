@@ -48,6 +48,21 @@
         </tr>
         <tbody id="myTable"></tbody>
       </table>
+      <button class="btn btn-secondary" onclick="showPopup()">Previous Downloaded Links</button>
+      <div id="popup" class="popup">
+        <div class="popup-content">
+          <span class="close" onclick="closePopup()"><button type="button" class="btn btn-warning">
+            Close
+          </button></span>
+          <h3 style="text-align: center;">List of links</h3>
+          <div class="scroll-box">
+            <ul id="linkbox">
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      
       <script src="script.js"></script>
     </div>
   </body>

@@ -30,5 +30,7 @@ router.get("/perusertotal", expensesController.perUserTotal);
 router.get("/month", expensesController.getExpensesByMonthAndDate);
 // Download exp
 router.get("/download", checkLogin, expensesController.downloadExpenses);
+// All download links of a user
+router.get("/alllinks", checkLogin, expensesController.usersAllExpenseslink);
 
 module.exports = router;
