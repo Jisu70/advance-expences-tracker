@@ -27,12 +27,9 @@
     </style>
   </head>
   <body>
-    <div class="text-left">
-      <button type="button" id="btn" class="btn btn-warning">
-        Download all your Expense
-      </button>
     </div>
     <header id="main-header" class="bg-success text-white p-4 mb-3">
+      <button class="btn btn-light" onclick="history.back()">Go Back</button>
       <div class="container">
         <h1 class="text-center" id="header-title">Lead Board</h1>
       </div>
@@ -48,6 +45,10 @@
         </tr>
         <tbody id="myTable"></tbody>
       </table>
+      <div class="text-right">
+        <button type="button" id="btn" class="btn btn-warning">
+          Download all your Expense
+        </button>
       <button class="btn btn-secondary" onclick="showPopup()">Previous Downloaded Links</button>
       <div id="popup" class="popup">
         <div class="popup-content">

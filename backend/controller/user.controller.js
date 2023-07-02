@@ -4,6 +4,10 @@ const jwt = require("jsonwebtoken");
 
 //. Save the user data to Database
 const saveData = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   try {
     const hashPassword = await bcrypt.hash(req.body.password, 10);
     const newUser = new User({
