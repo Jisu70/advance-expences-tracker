@@ -71,7 +71,7 @@ app.use(compression());
 })();
 
 // Starting the server
-app.listen(process.env.PORT || 3000, (err) => {
+app.listen(3000, (err) => {
   if (err) throw err;
   console.log(`App listening on port ${process.env.PORT}`);
 });

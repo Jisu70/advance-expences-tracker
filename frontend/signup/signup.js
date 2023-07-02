@@ -1,6 +1,7 @@
 const API_URL = `http://localhost:3000/api/user`;
 console.log("hello script");
 async function signUpUser() {
+  console.log("clicked")
   const name = document.getElementById("name");
   const email = document.getElementById("email");
   const password = document.getElementById("password");

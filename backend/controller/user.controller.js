@@ -1,6 +1,7 @@
 const { User } = require("../model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { validationResult } = require('express-validator');
 
 //. Save the user data to Database
 const saveData = async (req, res) => {
