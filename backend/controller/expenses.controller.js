@@ -47,59 +47,54 @@ const allExpenses = async (req, res) => {
   }
 };
 
-// 
-const allUserTotalExpenses = (req, res) => {
-  User.findAll()
-    .then((exp) => {
-      res.send(exp);
-    })
-    .catch((err) => console.error("Error fetching Expenses:", err));
+// TO fetch all the expenses
+const allUserTotalExpenses = async (req, res) => {
+  try {
+    const reponse = await User.findAll()
+    res.status(200).json({ result: reponse })
+  } catch (error) {
+    console.log(err)
+    res.status(400).json({ message: "Error fetching Expenses" })
+  }
+
 };
 
 // To edit or update the expenses
-const updateExpenses = (req, res) => {
+const updateExpenses = async (req, res) => {
   const userId = req.body.id;
   const updatedItem = req.body.item;
   const updatedAmount = req.body.amount;
   const updatedCategory = req.body.category;
-
-  Expense.findByPk(userId)
-    .then((result) => {
-      if (result) {
-        console.log(" this is result", result);
-        result.item = updatedItem;
-        result.amount = updatedAmount;
-        result.category = updatedCategory;
-        return result.save();
-      } else {
-        throw new Error("Cannot not edit");
-      }
-    })
-    .then((result) => {
-      console.log("Expenses updated:", result);
-      res.json({ message: "Expenses updated successfully." });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: "An error occurred." });
-    });
+  try {
+    const result = await Expense.findByPk(userId);
+    if (result) {
+      result.item = updatedItem;
+      result.amount = updatedAmount;
+      result.category = updatedCategory;
+      await result.save();
+      res.status(200).json({ message: "Expenses updated successfully." });
+    } else {
+      throw new Error("Cannot edit");
+    }
+  } catch (error) {
+    res.status(500).json({ error: "An error occurred." });
+  }
 };
 
 // To calculate the total expenses
-const totalExpenses = (req, res) => {
-  Expense.findAll({ where: { userId: req.userId } })
-    .then((expenses) => {
-      if (!expenses) {
-        return res
-          .status(404)
-          .json({ error: "Expenses not found for the provided user ID." });
-      }
-      return res.json(expenses);
-    })
-    .catch((err) => {
-      console.error("Error fetching expenses:", err);
-      return res.status(500).json({ error: "Internal server error." });
-    });
+const totalExpenses = async (req, res) => {
+  try {
+    const result = await Expense.findAll({ where: { userId: req.userId } })
+    if (result) {
+      res.status(200).json({ result: result });
+    } else {
+      res.status(404).json({ error: "Expenses not found for the provided user ID." });
+    }
+  }
+  catch (err) {
+    console.error("Error fetching expenses:", err);
+    return res.status(500).json({ error: "Internal server error." });
+  }
 };
 
 // To find the user by their ID
@@ -130,14 +125,20 @@ const deleteExpenses = async (req, res) => {
 };
 
 // Is user premium
-const isPremium = (req, res) => {
+const isPremium = async (req, res) => {
   let id = req.userId;
-  User.findByPk(id)
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((err) => console.error("Error fetching Expenses:", err));
+  try {
+    const result = await User.findByPk(id, {
+      attributes: ['isPremium'] 
+    });
+    console.log(result)
+    res.status(200).json({ result: result });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: err });
+  }
 };
+
 
 // 
 const perUserTotal = async (req, res) => {

@@ -11,9 +11,9 @@ const leadBoard = async () => {
       Authorization: `Bearer ${token}`,
     },
   });
-  const data = await response.json();
+  const {result} = await response.json();
 
-  if (data.isPremium === true) {
+  if (result.isPremium === true) {
     allUserTotalExpenses()
   } else {
     alert(" you are not a premium user ")
@@ -27,8 +27,8 @@ const allUserTotalExpenses = async () => {
       "Content-Type": "application/json",
     },
   });
-  const resultArray = await response.json();
-  buildTable(resultArray)
+  const {result} = await response.json();
+  buildTable(result)
 }
 // Table 
 const buildTable = async (data) => {
@@ -90,7 +90,6 @@ const showLinks = async () => {
     });
     const { result } = await response.json();
     addLinksToPage(result);
-    console.log(result);
   } catch (error) {
     console.error(error);
   }

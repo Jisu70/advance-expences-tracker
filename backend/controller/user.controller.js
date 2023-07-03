@@ -31,13 +31,11 @@ const saveData = async (req, res) => {
 // This will check the user isValid or not
 const loginUser = async (req, res) => {
   try {
-    // This will search the user using email
     const user = await User.findOne({
       where: { email: req.body.email }
     });
     console.log('user in login: ', user);
     if (user) {
-      // This will compare the password thats come with body
       const isValidPassword = await bcrypt.compare(
         req.body.password,
         user.password
@@ -60,7 +58,7 @@ const loginUser = async (req, res) => {
         });
       } else {
         res.status(401).json({
-          error: "Authentication failed! Invalid password.",
+          error: "Authentication failed ! Invalid password.",
         });
       }
     } else {

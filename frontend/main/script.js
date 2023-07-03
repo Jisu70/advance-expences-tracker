@@ -29,55 +29,8 @@ async function addExpenses() {
   item.value = "";
 }
 
-// To display all expences of user  
-// async function showAllExpensesOnScreen() {
-//   const token = localStorage.getItem("token");
-//   const response = await fetch(`http://localhost:3000/api/main/all-expenses`, {
-//     method: "GET",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
-//   // Check the response status code
-//   if (response.status === 401) {
-//     const loginPageLink = "http://127.0.0.1:5500/frontend/login/login.html";
-//     const confirmMessage = `Please click OK to go to the login page.`;
-//     if (window.confirm(confirmMessage)) {
-//       window.location.href = loginPageLink;
-//     }
-//     return;
-//   }
-//   const {result} = await response.json();
-//   const itemList = document.getElementsByClassName("list-group")[0];
-//   // Clear the existing content
-//   itemList.innerHTML = "";
-//   result.forEach((item) => {
-//     const listItem = document.createElement("li");
-//     listItem.className = "list-group-item";
-//     listItem.style.backgroundColor = "#6dbd9f4d";
-//     listItem.style.color = "#000000";
-//     listItem.textContent = `Item Name : ${item.item} , Item Price : ${item.amount}    Category  : ${item.category} `;
-//     const editButton = document.createElement("btn");
-//     editButton.className = "btn btn-info";
-//     editButton.style.float = "right";
-//     editButton.textContent = "Edit";
-//     editButton.addEventListener("click", () =>
-//       editItemDetails(item.id, item.item, item.amount, item.category)
-//     );
-//     const deleteButton = document.createElement("button");
-//     deleteButton.className = "btn btn-danger";
-//     deleteButton.style.float = "right";
-//     deleteButton.textContent = "Delete";
-//     deleteButton.addEventListener("click", () => deleteItem(item.id));
-//     listItem.appendChild(editButton);
-//     listItem.appendChild(deleteButton);
-//     itemList.appendChild(listItem);
-//   });
-// }
 
-
-// Display expenses using pagination 
+// TO Display expenses using pagination 
 let currentPage = 1;
 async function showAllExpensesOnScreen(page) {
   const token = localStorage.getItem("token");
@@ -98,7 +51,6 @@ async function showAllExpensesOnScreen(page) {
     return;
   }
   const { result } = await response.json();
-  console.log(result)
   const itemList = document.getElementsByClassName("list-group")[0];
   // Clear the existing content
   itemList.innerHTML = "";
@@ -124,7 +76,6 @@ async function showAllExpensesOnScreen(page) {
     listItem.appendChild(deleteButton);
     itemList.appendChild(listItem);
   });
-  console.log(result.count)
   displayPaginationButtons(result.count);
 }
 function displayPaginationButtons(totalCount) {
@@ -221,9 +172,9 @@ async function showTotalExpenses() {
       },
     }
   );
-  const data = await response.json();
+  const {result} = await response.json();
   let sum = 0;
-  data.forEach((result) => {
+  result.forEach((result) => {
     sum += parseInt(result.amount);
   });
   document.getElementById(
@@ -319,8 +270,8 @@ let premiumUserButton = async () => {
     },
   });
   const leadboardLink = "http://127.0.0.1:5500/frontend/leadboard/leadbord.html";
-  const data = await response.json();
-  if (data.isPremium === true) {
+  const {result} = await response.json();
+  if (result.isPremium === true) {
     window.location.href = leadboardLink;
   } else {
     alert("You are not a premium user");

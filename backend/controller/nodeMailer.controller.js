@@ -3,6 +3,9 @@ const User = require("../model/user.model");
 const bcrypt = require("bcrypt");
 const { PasswordTable } = require("../model/index");
 const resetPasswordForm = require("../views/resetPassword");
+
+
+// TO check the user valid and send email 
 const forgetPass = async (req, res) => {
   const email = req.body.email;
   try {
@@ -22,8 +25,8 @@ const forgetPass = async (req, res) => {
       });
       sendMail(email, resetRequest.id);
     } else {
-      res.status(200).json({
-        success: true,
+      res.status(400).json({
+        success: false,
         message: "This Email does not exist",
       });
     }
